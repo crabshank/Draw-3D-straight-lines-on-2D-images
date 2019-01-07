@@ -11,43 +11,31 @@
 
 <body>
 <div id="message"></div>
-<input type="file" accept="video/*"/>
+<input type="text" size="105" name="txtBx" id="txtBx">
+<input type="button" Value="Load Video" onClick="changeValue();">
 <button id="dflip" type="button" >Flip plane</button>
 <button  id="gmi" type="button" >Plane height-</button>
 <button id="gpl" type="button" >Plane height+</button>
 <button  id="cvsTog" type="button" >Create/Delete canvas</button>
 
 <div id="container" class="container">
-  <video class="video" id="vd1" controls autoPlay ></video>
+<video id="vd1" width="100%" controls autoplay>
+    <source id="VdoSrc" src=""></source>
+</video>
+
 </div>
 
 <script>
 
-window.onload=function(){
-(function localFileVideoPlayerInit(win) {
-  var URL = win.URL || win.webkitURL,
-
-    playSelectedFile = function playSelectedFileInit(event) {
-      var file = this.files[0];
-
-      var type = file.type;
-
-      var videoNode = document.querySelector('video');
-
-      var fileURL = URL.createObjectURL(file);
-
-      videoNode.src = fileURL;
-	  
-	  actStart();
-    },
-    inputNode = document.querySelector('input');
-
-
-
-  inputNode.addEventListener('change', playSelectedFile, false);
-}(window));
-
-}
+function changeValue()
+{
+    var txtVal = document.getElementById('txtBx').value;
+    alert(txtVal);  
+    var vid = document.getElementById('VdoSrc');
+    vid.src = txtVal;  
+    var myVdo = document.getElementById("vd1");     
+    myVdo.load(); 
+  }
 
 function actStart(){
 var canvas= document.createElement('canvas');
