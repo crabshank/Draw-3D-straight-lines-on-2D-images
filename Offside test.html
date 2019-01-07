@@ -201,7 +201,6 @@ canvas.width = vid.clientWidth;
 
 	var ctx2 = canvas2.getContext('2d');
 
-	//
 	var op = null;
 	var points = [[vid.clientWidth*0.2, vid.clientHeight*0.8],[vid.clientWidth*0.8,vid.clientHeight*0.8], [vid.clientWidth*0.8, vid.clientHeight*0.2],[vid.clientWidth*0.2, vid.clientHeight*0.2],[vid.clientWidth*0.4, vid.clientHeight*0.2],[vid.clientWidth*0.5,vid.clientHeight*0.6]];
 
@@ -399,10 +398,6 @@ lit(p);
 
 }
 
-
-//}
-
-
 }},);
 	
 	canvas.addEventListener("mouseup", function(event) {
@@ -435,8 +430,7 @@ canvas.addEventListener("mouseout", function(event) {
     function prepare_lines(ctx, p, with_line) {
 	ctx.save();
 	ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-	//ctx.clearRect(0, 0, 600, 450);
-	//
+
 	if( with_line == true ) {
 		ctx.beginPath();
 		ctx.moveTo(p[0][0], p[0][1]);
@@ -448,8 +442,6 @@ canvas.addEventListener("mouseout", function(event) {
 		ctx.stroke();
 	}
 
-	
-	//
 		ctx.fillStyle = "cyan";
 	for( var i=0; i<4; i++ ) {
 		ctx.beginPath();
@@ -458,7 +450,7 @@ canvas.addEventListener("mouseout", function(event) {
 	}
 	
 
-	//
+
 	ctx.restore();
 }
 
@@ -509,7 +501,7 @@ A=[[1,-1],[m1,-m2]];
 			
 			var xy={x:x, y:y};
 				var xyq1={x:xq1, y:yq1};
-		//		console.log(xyq1);
+
 	extendedPoint = toBorder(xyq1,xy, 0, canvas.clientWidth,canvas.clientHeight,0);
 ctx.moveTo(extendedPoint.x,extendedPoint.y);
 
