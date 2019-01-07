@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+
+<meta charset="utf-8">
+<script src="jquery-3.3.1.js"></script>
+    <script type="text/javascript" src="numeric-1.2.6.min.js"></script>
+  
+</head>
+
+<body>
+<div id="message"></div>
+<input type="file" accept="video/*"/>
+<button id="dflip" type="button" >Flip plane</button>
+<button  id="gmi" type="button" >Plane height-</button>
+<button id="gpl" type="button" >Plane height+</button>
+<button  id="cvsTog" type="button" >Create/Delete canvas</button>
+
+<div id="container" class="container">
+  <video class="video" id="vd1" controls muted autoPlay ></video>
+
+
+ 
+</div>
+
+<script>
+
+
+
+
+
+window.onload=function(){
+(function localFileVideoPlayerInit(win) {
+  var URL = win.URL || win.webkitURL,
+
+    playSelectedFile = function playSelectedFileInit(event) {
+      var file = this.files[0];
+
+      var type = file.type;
+
+      var videoNode = document.querySelector('video');
+
+      var fileURL = URL.createObjectURL(file);
+
+      videoNode.src = fileURL;
+	  
+	  actStart();
+    },
+    inputNode = document.querySelector('input');
+
+
+
+  inputNode.addEventListener('change', playSelectedFile, false);
+}(window));
+
+}
+
+function actStart(){
+var canvas= document.createElement('canvas');
+canvas.id="canvas";
+canvas.className="canvas";
+document.getElementById('container').appendChild(canvas);            
+document.getElementById('dflip').onclick=function(){
+dflip();
+}
+document.getElementById('gmi').onclick=function(){
+gmi();
+}
+document.getElementById('gpl').onclick=function(){
+gpl();
+}
+document.getElementById('cvsTog').onclick=function(){
+cvsTog();
+}
+
+
+var vid=$("video#vd1")[0];
+var d=1;
+console.log(vid);
+
+var theta=5*(Math.PI/180);
+var thetav=0.05*(Math.PI/180);
+function gmi(){
+
+theta-=0.1*(Math.PI/180);
+thetav-=0.01*(Math.PI/180);
+if(theta<0){
+theta=0}
+if(thetav<0){
+thetav=0}
+var p = get_mouse_position(event);
+
+
+	switch(scr) {
+    case 0:
+	case 1:
+both(p);
+        break;
+       case 2:
+	case 3:
+lit(p);
+        break;
+       case  4:
+	case 5:
+		  	li(p);
+        break;
+
+	
+}
+}
+
+function gpl(){
+
+theta+=0.1*(Math.PI/180);
+thetav+=0.01*(Math.PI/180);
+
+
+var p = get_mouse_position(event);
+
+
+	switch(scr) {
+    case 0:
+	case 1:
+both(p);
+        break;
+       case 2:
+	case 3:
+lit(p);
+        break;
+       case  4:
+	case 5:
+		  	li(p);
+        break;
+
+	
+}
+}
+
+
+function cvsTog(){
+let tmp_cvs = document.getElementsByTagName('CANVAS');
+
+if (tmp_cvs.length>0)
+{
+for (i=0;i<tmp_cvs.length;i++){
+tmp_cvs[i].remove();
+}
+}else{
+actStart();
+}
+}
+
+
+
+function dflip(){
+
+d*=-1;
+var p = get_mouse_position(event);
+
+
+	switch(scr) {
+    case 0:
+	case 1:
+both(p);
+        break;
+       case 2:
+	case 3:
+lit(p);
+        break;
+       case  4:
+	case 5:
+		  	li(p);
+        break;
+
+	
+}
+}
+
+
+
+
+
+
+var xs=[0];
+var ys=[0];
+var tdxs=[0];
+var tdys=[0];
+var canvas = document.getElementById("canvas");
+canvas.width = vid.clientWidth;
+	canvas.height = vid.clientHeight;
+
+	var ctx = canvas.getContext('2d');
+
+	var canvas1 = document.createElement('canvas');		
+
+	var ctx1 = canvas1.getContext('2d');
+
+	var canvas2 = document.createElement('canvas');
+
+
+	var ctx2 = canvas2.getContext('2d');
+
+	//
+	var op = null;
+	var points = [[vid.clientWidth*0.2, vid.clientHeight*0.8],[vid.clientWidth*0.8,vid.clientHeight*0.8], [vid.clientWidth*0.8, vid.clientHeight*0.2],[vid.clientWidth*0.2, vid.clientHeight*0.2],[vid.clientWidth*0.4, vid.clientHeight*0.2],[vid.clientWidth*0.5,vid.clientHeight*0.6]];
+
+		prepare_lines(ctx2, points);
+		draw_canvas(ctx, ctx1, ctx2);
+
+	var drag = null;
+	
+		var prx=15;
+		
+		
+      function toBorder(point1, point2, left, top, right, bottom) {
+	  
+	  
+      	var x1 = point1.x;
+        var x2 = point2.x;
+        var y1 = point1.y;
+        var y2 = point2.y;
+        var dx, dy, py, vx, vy;
+        vx = x2 - x1;
+        vy = y2 - y1;
+        dx = vx < 0 ? left : right;
+        dy = py = vy < 0 ? top : bottom;
+        if (vx === 0) {
+          dx = x1;
+        } else if (vy === 0) {
+          dy = y1;
+        } else {
+          var dy = y1 + (vy / vx) * (dx - x1);
+          if (dy < top || dy > bottom) {
+            dx = x1 + (vx / vy) * (py - y1);
+            dy = py;
+          }
+        }
+        return {
+          x: dx,
+          y: dy
+        }
+      }
+	
+	function both(p){
+			  		prepare_lines(ctx2, points, true);
+		draw_canvas(ctx, ctx1, ctx2);
+  setupt(p.x,p.y,d);
+    setup(p.x,p.y,d);
+	}
+	
+		function lit(p){
+			  		prepare_lines(ctx2, points, true);
+		draw_canvas(ctx, ctx1, ctx2);
+  setupt(p.x,p.y,d);
+
+	}
+	
+		
+		function li(p){
+			  		prepare_lines(ctx2, points, true);
+		draw_canvas(ctx, ctx1, ctx2);
+  setup(p.x,p.y,d);
+
+	}
+
+	canvas.addEventListener("mousedown", function(event) {
+
+	canvas.width = vid.clientWidth;
+	canvas.height = vid.clientHeight;
+	
+		canvas1.width = vid.clientWidth;
+	canvas1.height = vid.clientHeight;
+	
+		canvas2.width = vid.clientWidth;
+	canvas2.height = vid.clientHeight;
+		event.preventDefault();
+		var p = get_mouse_position(event);
+		for( var i=0; i<4; i++ ) {
+			var x = points[i][0];
+     		var y = points[i][1];
+						xs[i]= points[i][0];
+     		ys[i] = points[i][1];
+		
+		if( p.x < x + prx && p.x > x - prx && p.y < y + prx && p.y > y - prx ) {
+		drag = i;
+
+		}
+		}
+		
+				for( var i=4; i<6; i++ ) {
+			var x = points[i][0];
+     		var y = points[i][1];
+						tdxs[i-4]= points[i][0];
+     		tdys[i-4] = points[i][1];
+		
+		if( p.x < x + prx && p.x > x - prx && p.y < y + prx && p.y > y - prx ) {
+		drag = i;
+
+		}
+		}
+
+		
+switch(scr) {
+    case 0:
+	case 1:
+both(p);
+        break;
+       case 2:
+	case 3:
+lit(p);
+        break;
+       case  4:
+	case 5:
+		  	li(p);
+        break;
+
+}
+		
+
+	}, false);
+	canvas.addEventListener("mousemove", function(event) {
+
+	var p = get_mouse_position(event);
+	  if (event.which == 1) {
+
+
+switch(scr) {
+    case 0:
+	case 1:
+both(p);
+        break;
+       case 2:
+	case 3:
+lit(p);
+        break;
+       case  4:
+	case 5:
+		  	li(p);
+        break;
+
+}
+
+    }
+
+
+
+		event.preventDefault();
+if(drag == null) { return; }else{
+
+
+	points[drag][0] = p.x;
+		points[drag][1] = p.y;
+		
+	
+			
+		
+		
+		prepare_lines(ctx2, points, true);
+		draw_canvas(ctx, ctx1, ctx2);
+
+		}
+		
+		
+	}, false);
+	
+	
+	
+	var scr=0;
+	
+
+	canvas.addEventListener("wheel", function(event) {
+
+	 if (event.altKey) {
+	 event.preventDefault();
+if(event.deltaY/ Math.abs(event.deltaY)<0){gpl();}else
+{gmi();}
+    }else{
+var p = get_mouse_position(event);
+	
+	scr=(scr+( event.deltaY/ event.deltaY)) % 6;
+	
+	
+
+	switch(scr) {
+    case 0:
+	case 1:
+both(p);
+        break;
+       case 2:
+	case 3:
+lit(p);
+        break;
+       case  4:
+	case 5:
+		  	li(p);
+        break;
+
+
+}
+
+
+//}
+
+
+}},);
+	
+	canvas.addEventListener("mouseup", function(event) {
+		event.preventDefault();
+
+		
+		drag = null;
+		var p = get_mouse_position(event);
+		points[drag][0] = p.x;
+		points[drag][1] = p.y;
+		ctx.clearRect(0, 0, canvas.width, canvas.height);
+		ctx1.clearRect(0, 0, canvas.width, canvas.height);
+var s = (new Date()).getTime();
+		op.draw(points);
+document.getElementById("ms").innerHTML = ( (new Date()).getTime() - s );
+		prepare_lines(ctx2, points);
+		draw_canvas(ctx, ctx1, ctx2);
+		drag = null;
+	}, false);
+canvas.addEventListener("mouseout", function(event) {
+	event.preventDefault();
+		drag = null;
+	}, false);
+	canvas.addEventListener("mouseenter", function(event) {
+		event.preventDefault();
+		drag = null;
+	}, false);
+
+
+    function prepare_lines(ctx, p, with_line) {
+	ctx.save();
+	ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+	//ctx.clearRect(0, 0, 600, 450);
+	//
+	if( with_line == true ) {
+		ctx.beginPath();
+		ctx.moveTo(p[0][0], p[0][1]);
+		for( var i=1; i<4; i++ ) {
+			ctx.lineTo(p[i][0], p[i][1]);
+		}
+		ctx.closePath();
+		ctx.strokeStyle = "black";
+		ctx.stroke();
+	}
+
+	
+	//
+		ctx.fillStyle = "cyan";
+	for( var i=0; i<4; i++ ) {
+		ctx.beginPath();
+		ctx.arc(p[i][0], p[i][1], 3, 0, Math.PI*2, true);
+		ctx.fill();
+	}
+	
+
+	//
+	ctx.restore();
+}
+
+function draw_canvas(ctx, ctx1, ctx2) {
+	ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+	ctx.drawImage(ctx1.canvas, 0, 0);
+	ctx.drawImage(ctx2.canvas, 0, 0);
+}
+
+function get_mouse_position(event) {
+	var rect = event.target.getBoundingClientRect() ;
+	return {
+		x: event.clientX - rect.left,
+		y: event.clientY - rect.top
+	};
+}
+
+
+
+
+var mvrt=0;
+
+
+
+function setup(x,y,d){
+var n=1;
+
+
+
+var m1=(ys[3]-ys[0])/(xs[3]-xs[0]);
+	var m2=(ys[2]-ys[1])/(xs[2]-xs[1]);
+		var mvrt=(tdys[1]-tdys[0])/(tdxs[1]-tdxs[0]);
+	var A = numeric.rep([2, n + 1], 1);
+A=[[1,-1],[m1,-m2]];
+	var res=[[xs[2]-xs[0]],[ys[2]-ys[0]]];
+	var g12=numeric.solve(A,res);
+	var xq1=xs[0]+g12[0];
+	var yq1=ys[0]+g12[0]*m1;
+	var xq2=xs[2]+g12[1];
+	var yq2=ys[2]+g12[1]*m2;
+	
+	
+			ctx.beginPath();
+			ctx.strokeStyle = "MediumBlue";
+			
+
+			
+			
+			var xy={x:x, y:y};
+				var xyq1={x:xq1, y:yq1};
+		//		console.log(xyq1);
+	extendedPoint = toBorder(xyq1,xy, 0, canvas.clientWidth,canvas.clientHeight,0);
+ctx.moveTo(extendedPoint.x,extendedPoint.y);
+
+extendedPoint1 = toBorder(xy,xyq1, 0,canvas.clientWidth,canvas.clientHeight,0);
+ctx.lineTo(extendedPoint1.x,extendedPoint1.y);
+
+		ctx.stroke();
+
+ctx.beginPath();
+
+var dp=-(x-xyq1.x)/Math.abs(x-xyq1.x);
+
+var tdx = Math.cos(d*dp*theta) * (x-xyq1.x) - Math.sin(d*dp*theta) * (y-xyq1.y) +xyq1.x;
+
+var tdy = Math.sin(d*dp*theta)  * (x-xyq1.x) + Math.cos(d*dp*theta) *  (y-xyq1.y) +  xyq1.y;
+		var tdxy={x:tdx, y:tdy};
+		
+		ctx.moveTo(extendedPoint.x,extendedPoint.y);	
+	extendedPoint2 = toBorder(xyq1,tdxy, 0, canvas.clientWidth,canvas.clientHeight,0);
+		ctx.lineTo(extendedPoint2.x,extendedPoint2.y);
+		extendedPoint3 = toBorder(tdxy,xyq1, 0,canvas.clientWidth,canvas.clientHeight,0);
+		ctx.lineTo(extendedPoint3.x,extendedPoint3.y);
+	ctx.lineTo(extendedPoint1.x,extendedPoint1.y);
+	
+
+
+
+
+
+	
+ctx.fillStyle = "rgba(255, 255, 255, 0.3)";
+ctx.strokeStyle="rgba(255, 255, 255, 0)";
+		ctx.stroke();
+	ctx.fill();	
+
+		
+		
+
+}
+var xyt=[0];
+
+
+function setupt(x,y,d){
+
+var n=1;
+alphat=[0];
+ betat=[0];
+
+
+
+var xst=[0];
+var yst=[0];
+
+xst[0]=xs[1];
+xst[1]=xs[0];
+xst[2]=xs[3];
+xst[3]=xs[2];
+
+yst[0]=ys[1];
+yst[1]=ys[0];
+yst[2]=ys[3];
+yst[3]=ys[2];
+
+
+
+var m1=(yst[1]-yst[0])/(xst[1]-xst[0]);
+	var m2=(yst[3]-yst[2])/(xst[3]-xst[2]);
+			var mvrt=(tdys[1]-tdys[0])/(tdxs[1]-tdxs[0]);
+	At = numeric.rep([2, n + 1], 1);
+At=[[1,-1],[m1,-m2]];
+	var res=[[xst[3]-xst[0]],[yst[3]-yst[0]]];
+	var g12=numeric.solve(At,res);
+	var xq1=xst[0]+g12[0];
+	var yq1=yst[0]+g12[0]*m1;
+	var xq2=xst[3]+g12[1];
+	var yq2=yst[3]+g12[1]*m2;
+	
+	var dn = [x-xq1,y-yq1];
+	var dd=Math.sqrt(dn[0]*dn[0]+dn[1]+dn[1]);
+	var pv=[dn[0]/dd,dn[1]/dd];
+	
+			ctx.beginPath();
+			ctx.strokeStyle = "MediumBlue";
+			
+
+			
+			
+			var xy={x:x, y:y};
+				var xyq1={x:xq1, y:yq1};
+
+	extendedPoint = toBorder(xyq1,xy, 0, canvas.clientWidth,canvas.clientHeight,0);
+ctx.moveTo(extendedPoint.x,extendedPoint.y);
+
+
+extendedPoint1 = toBorder(xy,xyq1, 0,canvas.clientWidth,canvas.clientHeight,0);
+ctx.lineTo(extendedPoint1.x,extendedPoint1.y);
+
+		ctx.stroke();
+
+ctx.beginPath();
+
+var dp=-(x-xyq1.x)/Math.abs(x-xyq1.x);
+
+var tdx = Math.cos(d*dp*thetav) * (x-xyq1.x) - Math.sin(d*dp*thetav) * (y-xyq1.y) +xyq1.x;
+
+var tdy = Math.sin(d*dp*thetav)  * (x-xyq1.x) + Math.cos(d*dp*thetav) *  (y-xyq1.y) +  xyq1.y;
+
+		var tdxy={x:tdx, y:tdy};
+		
+
+		ctx.moveTo(extendedPoint.x,extendedPoint.y);	
+	extendedPoint2 = toBorder(xyq1,tdxy, 0, canvas.clientWidth,canvas.clientHeight,0);
+		ctx.lineTo(extendedPoint2.x,extendedPoint2.y);
+		extendedPoint3 = toBorder(tdxy,xyq1, 0,canvas.clientWidth,canvas.clientHeight,0);
+		ctx.lineTo(extendedPoint3.x,extendedPoint3.y);
+	ctx.lineTo(extendedPoint1.x,extendedPoint1.y);
+ctx.fillStyle = "rgba(255, 255, 255, 0.3)";
+ctx.strokeStyle="rgba(255, 255, 255, 0)";
+		ctx.stroke();
+	ctx.fill();	
+}
+
+}
+
+</script>
+
+<style>
+.container {
+  margin: 0 auto;
+  position: relative;
+}
+
+.video {
+  width: 100%;
+  height: auto;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color:rgba(0,255,0,0);
+}
+
+</style>
+
+</body>
+
+
+</html>
