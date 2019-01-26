@@ -12,9 +12,9 @@
 <body>
 <div id="message"></div>
 <input id="tstImg" type="file" accept="image/*"/>
-<button onclick="dflip();" type="button" >Flip plane</button>
-<button onclick="gmi();" type="button" >Plane height-</button>
-<button onclick="gpl();" type="button" >Plane height+</button>
+<button id="dflip" type="button" >Flip plane</button>
+<button  id="gmi" type="button" >Plane height-</button>
+<button id="gpl" type="button" >Plane height+</button>
 <div class="container">
   <img id="imge"></img>
 
@@ -50,6 +50,17 @@ function handleFile(e)
 }
 
 function actStart(){
+
+document.getElementById('dflip').onclick=function(){
+dflip();
+}
+document.getElementById('gmi').onclick=function(){
+gmi();
+}
+document.getElementById('gpl').onclick=function(){
+gpl();
+}
+ 
 var vid=document.getElementById('imge');
 var d=1;
 console.log(vid);
