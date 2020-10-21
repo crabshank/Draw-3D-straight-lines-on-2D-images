@@ -511,105 +511,105 @@ function actStart() {
     }
     var xyt = [0];
 
-    function setupt(x, y, d) {
+        function setupt(x, y, d) {
 
-        var n = 1;
-        alphat = [0];
-        betat = [0];
+            var n = 1;
+            alphat = [0];
+            betat = [0];
 
-        var xst = [0];
-        var yst = [0];
+            var xst = [0];
+            var yst = [0];
 
-        xst[0] = xs[1];
-        xst[1] = xs[0];
-        xst[2] = xs[3];
-        xst[3] = xs[2];
+            xst[0] = xs[1];
+            xst[1] = xs[3];
+            xst[2] = xs[2];
+            xst[3] = xs[0];
 
-        yst[0] = ys[1];
-        yst[1] = ys[0];
-        yst[2] = ys[3];
-        yst[3] = ys[2];
+            yst[0] = ys[1];
+            yst[1] = ys[3];
+            yst[2] = ys[2];
+            yst[3] = ys[0];
 
-        var xy = {
-            x: x,
-            y: y
-        };
-        var xyq1 = {
-            x: 0,
-            y: 0
-        };
+            var xy = {
+                x: x,
+                y: y
+            };
+            var xyq1 = {
+                x: 0,
+                y: 0
+            };
 
-        if ((xst[3] == xst[0]) && (xst[2] != xst[1])) {
-            xyq1.x = xst[0];
-            xyq1.y = yst[1] + ((xst[0] - xst[1]) / (xst[1] - xst[2])) * (yst[1] - yst[2]);
-        } else if ((xst[3] != xst[0]) && (xst[2] == xst[1])) {
-            xyq1.x = xst[1];
-            xyq1.y = yst[0] + ((xst[1] - xst[0]) / (xst[0] - xst[3])) * (yst[0] - yst[3]);
-        } else if ((xst[3] == xst[0]) && (xst[2] == xst[1])) {
-            xyq1.x = x;
-        } else {
+            if ((xst[3] == xst[0]) && (xst[2] != xst[1])) {
+                xyq1.x = xst[0];
+                xyq1.y = yst[1] + ((xst[0] - xst[1]) / (xst[1] - xst[2])) * (yst[1] - yst[2]);
+            } else if ((xst[3] != xst[0]) && (xst[2] == xst[1])) {
+                xyq1.x = xst[1];
+                xyq1.y = yst[0] + ((xst[1] - xst[0]) / (xst[0] - xst[3])) * (yst[0] - yst[3]);
+            } else if ((xst[3] == xst[0]) && (xst[2] == xst[1])) {
+                xyq1.x = x;
+            } else {
 
-            var m1 = (yst[3] - yst[0]) / (xst[3] - xst[0]);
-            var m2 = (yst[2] - yst[1]) / (xst[2] - xst[1]);
-            var mvrt = (tdys[1] - tdys[0]) / (tdxs[1] - tdxs[0]);
-            var A = numeric.rep([2, n + 1], 1);
-            A = [
-                [1, -1],
-                [m1, -m2]
-            ];
-            var res = [
-                [xst[2] - xst[0]],
-                [yst[2] - yst[0]]
-            ];
-            var g12 = numeric.solve(A, res);
-            var xq1 = xst[0] + g12[0];
-            var yq1 = yst[0] + g12[0] * m1;
-            //var xq2=xst[2]+g12[1];
-            //var yq2=yst[2]+g12[1]*m2;
-            xyq1.x = xq1;
-            xyq1.y = yq1;
+                var m1 = (yst[3] - yst[0]) / (xst[3] - xst[0]);
+                var m2 = (yst[2] - yst[1]) / (xst[2] - xst[1]);
+                var mvrt = (tdys[1] - tdys[0]) / (tdxs[1] - tdxs[0]);
+                var A = numeric.rep([2, n + 1], 1);
+                A = [
+                    [1, -1],
+                    [m1, -m2]
+                ];
+                var res = [
+                    [xst[2] - xst[0]],
+                    [yst[2] - yst[0]]
+                ];
+                var g12 = numeric.solve(A, res);
+                var xq1 = xst[0] + g12[0];
+                var yq1 = yst[0] + g12[0] * m1;
+                //var xq2=xst[2]+g12[1];
+                //var yq2=yst[2]+g12[1]*m2;
+                xyq1.x = xq1;
+                xyq1.y = yq1;
 
+            }
+
+            /*var dn = [x-xq1,y-yq1];
+            var dd=Math.sqrt(dn[0]*dn[0]+dn[1]+dn[1]);
+            var pv=[dn[0]/dd,dn[1]/dd];*/
+
+            ctx.beginPath();
+            ctx.strokeStyle = "MediumBlue";
+            ctx.lineWidth = 0.7;
+            extendedPoint = toBorder(xyq1, xy, 0, canvas.clientWidth, canvas.clientHeight, 0);
+            ctx.moveTo(extendedPoint.x, extendedPoint.y);
+
+            extendedPoint1 = toBorder(xy, xyq1, 0, canvas.clientWidth, canvas.clientHeight, 0);
+            ctx.lineTo(extendedPoint1.x, extendedPoint1.y);
+
+            ctx.stroke();
+
+            ctx.beginPath();
+
+            var dp = -(x - xyq1.x) / Math.abs(x - xyq1.x);
+
+            var tdx = Math.cos(d * dp * thetav) * (x - xyq1.x) - Math.sin(d * dp * thetav) * (y - xyq1.y) + xyq1.x;
+
+            var tdy = Math.sin(d * dp * thetav) * (x - xyq1.x) + Math.cos(d * dp * thetav) * (y - xyq1.y) + xyq1.y;
+
+            var tdxy = {
+                x: tdx,
+                y: tdy
+            };
+
+            ctx.moveTo(extendedPoint.x, extendedPoint.y);
+            extendedPoint2 = toBorder(xyq1, tdxy, 0, canvas.clientWidth, canvas.clientHeight, 0);
+            ctx.lineTo(extendedPoint2.x, extendedPoint2.y);
+            extendedPoint3 = toBorder(tdxy, xyq1, 0, canvas.clientWidth, canvas.clientHeight, 0);
+            ctx.lineTo(extendedPoint3.x, extendedPoint3.y);
+            ctx.lineTo(extendedPoint1.x, extendedPoint1.y);
+            ctx.fillStyle = "rgba(255, 255, 255, 0.3)";
+            ctx.strokeStyle = "rgba(255, 255, 255, 0)";
+            ctx.stroke();
+            ctx.fill();
         }
-
-        /*var dn = [x-xq1,y-yq1];
-        var dd=Math.sqrt(dn[0]*dn[0]+dn[1]+dn[1]);
-        var pv=[dn[0]/dd,dn[1]/dd];*/
-
-        ctx.beginPath();
-        ctx.strokeStyle = "MediumBlue";
-        ctx.lineWidth = 0.7;
-        extendedPoint = toBorder(xyq1, xy, 0, canvas.clientWidth, canvas.clientHeight, 0);
-        ctx.moveTo(extendedPoint.x, extendedPoint.y);
-
-        extendedPoint1 = toBorder(xy, xyq1, 0, canvas.clientWidth, canvas.clientHeight, 0);
-        ctx.lineTo(extendedPoint1.x, extendedPoint1.y);
-
-        ctx.stroke();
-
-        ctx.beginPath();
-
-        var dp = -(x - xyq1.x) / Math.abs(x - xyq1.x);
-
-        var tdx = Math.cos(d * dp * thetav) * (x - xyq1.x) - Math.sin(d * dp * thetav) * (y - xyq1.y) + xyq1.x;
-
-        var tdy = Math.sin(d * dp * thetav) * (x - xyq1.x) + Math.cos(d * dp * thetav) * (y - xyq1.y) + xyq1.y;
-
-        var tdxy = {
-            x: tdx,
-            y: tdy
-        };
-
-        ctx.moveTo(extendedPoint.x, extendedPoint.y);
-        extendedPoint2 = toBorder(xyq1, tdxy, 0, canvas.clientWidth, canvas.clientHeight, 0);
-        ctx.lineTo(extendedPoint2.x, extendedPoint2.y);
-        extendedPoint3 = toBorder(tdxy, xyq1, 0, canvas.clientWidth, canvas.clientHeight, 0);
-        ctx.lineTo(extendedPoint3.x, extendedPoint3.y);
-        ctx.lineTo(extendedPoint1.x, extendedPoint1.y);
-        ctx.fillStyle = "rgba(255, 255, 255, 0.3)";
-        ctx.strokeStyle = "rgba(255, 255, 255, 0)";
-        ctx.stroke();
-        ctx.fill();
-    }
 
 }
 </script>
