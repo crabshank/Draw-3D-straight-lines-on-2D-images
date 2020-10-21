@@ -51,6 +51,25 @@
     function actStart() {
 	var lkln = document.getElementById('lkl');
 	    var scr = 0;
+				function switcher(){
+
+					switch (scr) {
+						case 0:
+						case 1:
+							both(p);
+							break;
+						case 2:
+						case 3:
+							lit(p);
+							break;
+						case 4:
+						case 5:
+							li(p);
+							break;
+
+					}
+
+		}
         var canvas = document.createElement('canvas');
         canvas.id = "canvas";
         canvas.className = "canvas";
@@ -83,26 +102,6 @@
         var swtch = vid.playbackRate;
         var bckw;
         var multiKy = 0;
-
-		function switcher(){
-
-					switch (scr) {
-						case 0:
-						case 1:
-							both(p);
-							break;
-						case 2:
-						case 3:
-							lit(p);
-							break;
-						case 4:
-						case 5:
-							li(p);
-							break;
-
-					}
-
-		}
 
         document.onkeydown = function(e) {
 

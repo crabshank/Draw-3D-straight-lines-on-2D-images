@@ -65,6 +65,8 @@ function handleFile(e) {
 
 function actStart() {
 
+	var scr = 0;
+
     document.getElementById('dflip').onclick = function() {
         dflip();
     }
@@ -279,7 +281,6 @@ function actStart() {
 
     }, false);
 
-    var scr = 0;
 
     canvas.addEventListener("wheel", function(event) {
 

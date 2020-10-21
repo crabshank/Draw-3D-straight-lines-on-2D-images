@@ -25,6 +25,26 @@
 
 <script>
 var cntn = document.getElementsByClassName('container')[0];
+    var scr = 0;
+			function switcher(){
+
+					switch (scr) {
+						case 0:
+						case 1:
+							both(p);
+							break;
+						case 2:
+						case 3:
+							lit(p);
+							break;
+						case 4:
+						case 5:
+							li(p);
+							break;
+
+					}
+
+		}
 var angl = 0;
 var p = {
     x: 0,
@@ -75,26 +95,6 @@ function actStart() {
         gpl();
     }
 	
-			function switcher(){
-
-					switch (scr) {
-						case 0:
-						case 1:
-							both(p);
-							break;
-						case 2:
-						case 3:
-							lit(p);
-							break;
-						case 4:
-						case 5:
-							li(p);
-							break;
-
-					}
-
-		}
-
     var vid = document.getElementById('imge');
     var d = 1;
     console.log(vid);
@@ -278,8 +278,6 @@ function actStart() {
         }
 
     }, false);
-
-    var scr = 0;
 
     canvas.addEventListener("wheel", function(event) {
 
