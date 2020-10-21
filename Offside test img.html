@@ -8,17 +8,20 @@
 </head>
 
 <body>
-
+<main style="display: -webkit-inline-box;">
+<section style="display: table-caption;">
 <input id="tstImg" type="file" accept="image/*"/>
 <button id="dflip" type="button" >Flip plane</button>
 <button  id="gmi" type="button" >Plane height-</button>
 <button id="gpl" type="button" >Plane height+</button>
-<input id="lkl" type="checkbox" >Look down line</input>
+<input id="lkl" type="checkbox" >Auto-straighten plane</input>
+</section>
 
 <section class="container">
 <img id="imge"></img>
 <canvas class="canvas" id="canvas"></canvas>
 </section>
+</main>
 
 <script>
 var cntn = document.getElementsByClassName('container')[0];
@@ -28,13 +31,15 @@ var p = {
     y: 0
 };
 var lkln = document.getElementById('lkl');
-lkln.oninput = function() {
-    if (!lkln.checked) {
-        cntn.style.cssText = '';
-    } else {
-        cntn.style.cssText = 'transform: skewX(' + angl + 'rad);'
-    }
-}
+
+		lkln.oninput = function() {
+			if (!lkln.checked) {
+				cntn.style.cssText = '';
+			} else if (scr>1) {
+				cntn.style.cssText =  'transform: rotate(' + angl + 'rad);';
+			}
+			switcher();
+		}
 var v_tstImg = document.getElementById('tstImg');
 v_tstImg.addEventListener('change', handleFile, false);
 var ctx_tmp = document.getElementById('canvas').getContext('2d');
@@ -69,6 +74,26 @@ function actStart() {
     document.getElementById('gpl').onclick = function() {
         gpl();
     }
+	
+			function switcher(){
+
+					switch (scr) {
+						case 0:
+						case 1:
+							both(p);
+							break;
+						case 2:
+						case 3:
+							lit(p);
+							break;
+						case 4:
+						case 5:
+							li(p);
+							break;
+
+					}
+
+		}
 
     var vid = document.getElementById('imge');
     var d = 1;
@@ -85,21 +110,7 @@ function actStart() {
             0) {
             theta = 0;
         }
-
-        switch (scr) {
-            case 0:
-            case 1:
-                both(p);
-                break;
-            case 2:
-            case 3:
-                lit(p);
-                break;
-            case 4:
-            case 5:
-                li(p);
-                break;
-        }
+	switcher();
     }
 
     function gpl() {
@@ -107,40 +118,14 @@ function actStart() {
         theta += 0.1 * (Math.PI / 180);
         thetav += 0.01 * (Math.PI / 180);
 
-        switch (scr) {
-            case 0:
-            case 1:
-                both(p);
-                break;
-            case 2:
-            case 3:
-                lit(p);
-                break;
-            case 4:
-            case 5:
-                li(p);
-                break;
-        }
+	switcher();
     }
 
     function dflip() {
 
         d *= -1;
 
-        switch (scr) {
-            case 0:
-            case 1:
-                both(p);
-                break;
-            case 2:
-            case 3:
-                lit(p);
-                break;
-            case 4:
-            case 5:
-                li(p);
-                break;
-        }
+		switcher();
     }
 
     var xs = [0];
@@ -206,26 +191,32 @@ function actStart() {
     }
     Source: https: //stackoverflow.com/a/45056039 - Blindman67
 
-        function both(p) {
+
+            function both(p) {
+                prepare_lines(ctx2, points);
+                draw_canvas(ctx, ctx1, ctx2);
+                setupt(p.x, p.y, d);
+                setup(p.x, p.y, d);
+            }
+
+        function lit(p) {
             prepare_lines(ctx2, points);
             draw_canvas(ctx, ctx1, ctx2);
             setupt(p.x, p.y, d);
-            setup(p.x, p.y, d);
+			if (lkln.checked == true && scr>1)  {
+               cntn.style.cssText = 'transform: rotate(' + angl + 'rad);';
+            }
         }
 
-    function lit(p) {
-        prepare_lines(ctx2, points);
-        draw_canvas(ctx, ctx1, ctx2);
-        setupt(p.x, p.y, d);
+        function li(p) {
+            prepare_lines(ctx2, points);
+            draw_canvas(ctx, ctx1, ctx2);
+            setup(p.x, p.y, d);
+			if (lkln.checked == true && scr>1)  {
+               cntn.style.cssText =  'transform: rotate(' + angl + 'rad);';
+            }
 
-    }
-
-    function li(p) {
-        prepare_lines(ctx2, points);
-        draw_canvas(ctx, ctx1, ctx2);
-        setup(p.x, p.y, d);
-
-    }
+        }
 
     canvas.addEventListener("mousedown", function(event) {
 
@@ -262,21 +253,7 @@ function actStart() {
             }
         }
 
-        switch (scr) {
-            case 0:
-            case 1:
-                both(p);
-                break;
-            case 2:
-            case 3:
-                lit(p);
-                break;
-            case 4:
-            case 5:
-                li(p);
-                break;
-
-        }
+        switcher();
 
     }, false);
     canvas.addEventListener("mousemove", function(event) {
@@ -285,21 +262,7 @@ function actStart() {
 
             p = get_mouse_position(event);
 
-            switch (scr) {
-                case 0:
-                case 1:
-                    both(p);
-                    break;
-                case 2:
-                case 3:
-                    lit(p);
-                    break;
-                case 4:
-                case 5:
-                    li(p);
-                    break;
-
-            }
+            switcher();
 
         }
 
@@ -322,8 +285,7 @@ function actStart() {
 
         if (event.altKey) {
             event.preventDefault();
-            if (event.deltaY / Math.abs(event.deltaY) <
-                0) {
+            if (event.deltaY / Math.abs(event.deltaY) < 0) {
                 gpl();
             } else {
                 gmi();
@@ -333,21 +295,7 @@ function actStart() {
 
             scr = (scr + (event.deltaY / event.deltaY)) % 6;
 
-            switch (scr) {
-                case 0:
-                case 1:
-                    both(p);
-                    break;
-                case 2:
-                case 3:
-                    lit(p);
-                    break;
-                case 4:
-                case 5:
-                    li(p);
-                    break;
-
-            }
+            switcher();
 
         }
     }, );
@@ -369,31 +317,30 @@ function actStart() {
         drag = null;
     }, false);
 
-    function prepare_lines(ctx, p) {
-        ctx.save();
-        ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
+        function prepare_lines(ctx, p) {
+            ctx.save();
+            ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
-            ctx.beginPath();
-            ctx.moveTo(p[0][0], p[0][1]);
-            for (var i = 1; i <
-                4; i++) {
-                ctx.lineTo(p[i][0], p[i][1]);
+                ctx.beginPath();
+                ctx.moveTo(p[0][0], p[0][1]);
+                for (var i = 1; i <
+                    4; i++) {
+                    ctx.lineTo(p[i][0], p[i][1]);
+                }
+                ctx.closePath();
+                ctx.strokeStyle = "black";
+                ctx.stroke();
+
+            ctx.strokeStyle = 'cyan';
+            for (var i = 0; i <4; i++) {
+                ctx.beginPath();
+                ctx.arc(p[i][0], p[i][1], 3, 0, Math.PI * 2, true);
+                ctx.stroke();
             }
-            ctx.closePath();
-            ctx.strokeStyle = "black";
-            ctx.stroke();
 
-        ctx.strokeStyle = 'cyan';
-        for (var i = 0; i <
-            4; i++) {
-            ctx.beginPath();
-            ctx.arc(p[i][0], p[i][1], 3, 0, Math.PI * 2, true);
-            ctx.stroke();
+            ctx.restore();
         }
-
-        ctx.restore();
-    }
 
     function draw_canvas(ctx, ctx1, ctx2) {
         ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
@@ -401,115 +348,121 @@ function actStart() {
         ctx.drawImage(ctx2.canvas, 0, 0);
     }
 
-    function get_mouse_position(event) {
+        function get_mouse_position(event) {
 
-        if (lkln.checked == true) {
-            cntn.style.cssText = '';
-            var rect = event.target.getBoundingClientRect();
-            let o_x = event.clientX - rect.left;
-            let o_y = event.clientY - rect.top;
-            cntn.style.cssText = 'transform: skewX(' + angl + 'rad);'
-            return {
-                x: o_x,
-                y: o_y
-            };
-        } else {
-            var rect = event.target.getBoundingClientRect();
-            return {
-                x: event.clientX - rect.left,
-                y: event.clientY - rect.top
-            };
+            if (lkln.checked == true) {
+                cntn.style.cssText = '';
+                var rect = event.target.getBoundingClientRect();
+                let o_x = event.clientX - rect.left;
+                let o_y = event.clientY - rect.top;
+                if (scr>1) {
+				cntn.style.cssText =  'transform: rotate(' + angl + 'rad);';
+				}
+                return {
+                    x: o_x,
+                    y: o_y
+                };
+            } else {
+                var rect = event.target.getBoundingClientRect();
+                return {
+                    x: event.clientX - rect.left,
+                    y: event.clientY - rect.top
+                };
+            }
         }
-    }
 
     var mvrt = 0;
 
-    function setup(x, y, d) {
-        var n = 1;
+            var mvrt = 0;	
 
-        var xy = {
-            x: x,
-            y: y
-        };
-        var xyq1 = {
-            x: 0,
-            y: 0
-        };
+        function setup(x, y, d) {
+            var n = 1;
 
-        if ((xs[3] == xs[0]) && (xs[2] != xs[1])) {
-            xyq1.x = xs[0];
-            xyq1.y = ys[1] + ((xs[0] - xs[1]) / (xs[1] - xs[2])) * (ys[1] - ys[2]);
-        } else if ((xs[3] != xs[0]) && (xs[2] == xs[1])) {
-            xyq1.x = xs[1];
-            xyq1.y = ys[0] + ((xs[1] - xs[0]) / (xs[0] - xs[3])) * (ys[0] - ys[3]);
-        } else if ((xs[3] == xs[0]) && (xs[2] == xs[1])) {
-            xyq1.x = x;
-        } else {
+            var xy = {
+                x: x,
+                y: y
+            };
+            var xyq1 = {
+                x: 0,
+                y: 0
+            };
+			let infn=((xs[3] == xs[0]) && (xs[2] == xs[1]))?true:false; 
+            if ((xs[3] == xs[0]) && (xs[2] != xs[1])) {
+                xyq1.x = xs[0];
+                xyq1.y = ys[1] + ((xs[0] - xs[1]) / (xs[1] - xs[2])) * (ys[1] - ys[2]);
+            } else if ((xs[3] != xs[0]) && (xs[2] == xs[1])) {
+                xyq1.x = xs[1];
+                xyq1.y = ys[0] + ((xs[1] - xs[0]) / (xs[0] - xs[3])) * (ys[0] - ys[3]);
+            } else if (!infn) {
 
-            var m1 = (ys[3] - ys[0]) / (xs[3] - xs[0]);
-            var m2 = (ys[2] - ys[1]) / (xs[2] - xs[1]);
-            var mvrt = (tdys[1] - tdys[0]) / (tdxs[1] - tdxs[0]);
-            var A = numeric.rep([2, n + 1], 1);
-            A = [
-                [1, -1],
-                [m1, -m2]
-            ];
-            var res = [
-                [xs[2] - xs[0]],
-                [ys[2] - ys[0]]
-            ];
-            var g12 = numeric.solve(A, res);
-            var xq1 = xs[0] + g12[0];
-            var yq1 = ys[0] + g12[0] * m1;
-            //var xq2=xs[2]+g12[1];
-            //var yq2=ys[2]+g12[1]*m2;
-            xyq1.x = xq1;
-            xyq1.y = yq1;
+                var m1 = (ys[3] - ys[0]) / (xs[3] - xs[0]);
+                var m2 = (ys[2] - ys[1]) / (xs[2] - xs[1]);
+                var mvrt = (tdys[1] - tdys[0]) / (tdxs[1] - tdxs[0]);
+                var A = numeric.rep([2, n + 1], 1);
+                A = [
+                    [1, -1],
+                    [m1, -m2]
+                ];
+                var res = [
+                    [xs[2] - xs[0]],
+                    [ys[2] - ys[0]]
+                ];
+                var g12 = numeric.solve(A, res);
+                var xq1 = xs[0] + g12[0];
+                var yq1 = ys[0] + g12[0] * m1;
+                //var xq2=xs[2]+g12[1];
+                //var yq2=ys[2]+g12[1]*m2;
+                xyq1.x = xq1;
+                xyq1.y = yq1;
+
+            }
+
+            ctx.beginPath();
+            ctx.strokeStyle = "MediumBlue";
+            ctx.lineWidth = 0.7;
+
+			if (!infn){
+			            extendedPoint = toBorder(xyq1, xy, 0, canvas.clientWidth, canvas.clientHeight, 0);
+            ctx.moveTo(extendedPoint.x, extendedPoint.y);
+
+            extendedPoint1 = toBorder(xy, xyq1, 0, canvas.clientWidth, canvas.clientHeight, 0);
+            ctx.lineTo(extendedPoint1.x, extendedPoint1.y);
+
+            ctx.stroke();
+			 ctx.beginPath();
+            var dp = -(x - xyq1.x) / Math.abs(x - xyq1.x);
+
+            var tdx = Math.cos(d * dp * theta) * (x - xyq1.x) - Math.sin(d * dp * theta) * (y - xyq1.y) + xyq1.x;
+
+            var tdy = Math.sin(d * dp * theta) * (x - xyq1.x) + Math.cos(d * dp * theta) * (y - xyq1.y) + xyq1.y;
+            var tdxy = {
+                x: tdx,
+                y: tdy
+            };
+
+            ctx.moveTo(extendedPoint.x, extendedPoint.y);
+            extendedPoint2 = toBorder(xyq1, tdxy, 0, canvas.clientWidth, canvas.clientHeight, 0);
+            ctx.lineTo(extendedPoint2.x, extendedPoint2.y);
+            extendedPoint3 = toBorder(tdxy, xyq1, 0, canvas.clientWidth, canvas.clientHeight, 0);
+            ctx.lineTo(extendedPoint3.x, extendedPoint3.y);
+            ctx.lineTo(extendedPoint1.x, extendedPoint1.y);
+
+            ctx.fillStyle = "rgba(255, 255, 255, 0.3)";
+            ctx.strokeStyle = "rgba(255, 255, 255, 0)";
+            ctx.stroke();
+            ctx.fill();
+			//angl = Math.PI + Math.atan2((extendedPoint.x - extendedPoint1.x) , extendedPoint1.y); //SkewX
+			angl = Math.atan2(y-yq1,xq1-x)-0.5*Math.PI;
+			}else{
+			ctx.moveTo(x, 0);
+			ctx.lineTo(x,canvas.clientHeight);
+			ctx.stroke();
+			angl =0;
+			}
+
+        
 
         }
-
-        ctx.beginPath();
-        ctx.strokeStyle = "MediumBlue";
-        ctx.lineWidth = 0.7;
-
-        extendedPoint = toBorder(xyq1, xy, 0, canvas.clientWidth, canvas.clientHeight, 0);
-        ctx.moveTo(extendedPoint.x, extendedPoint.y);
-
-        extendedPoint1 = toBorder(xy, xyq1, 0, canvas.clientWidth, canvas.clientHeight, 0);
-        ctx.lineTo(extendedPoint1.x, extendedPoint1.y);
-
-        ctx.stroke();
-
-        ctx.beginPath();
-
-        var dp = -(x - xyq1.x) / Math.abs(x - xyq1.x);
-
-        var tdx = Math.cos(d * dp * theta) * (x - xyq1.x) - Math.sin(d * dp * theta) * (y - xyq1.y) + xyq1.x;
-
-        var tdy = Math.sin(d * dp * theta) * (x - xyq1.x) + Math.cos(d * dp * theta) * (y - xyq1.y) + xyq1.y;
-        var tdxy = {
-            x: tdx,
-            y: tdy
-        };
-
-        ctx.moveTo(extendedPoint.x, extendedPoint.y);
-        extendedPoint2 = toBorder(xyq1, tdxy, 0, canvas.clientWidth, canvas.clientHeight, 0);
-        ctx.lineTo(extendedPoint2.x, extendedPoint2.y);
-        extendedPoint3 = toBorder(tdxy, xyq1, 0, canvas.clientWidth, canvas.clientHeight, 0);
-        ctx.lineTo(extendedPoint3.x, extendedPoint3.y);
-        ctx.lineTo(extendedPoint1.x, extendedPoint1.y);
-
-        ctx.fillStyle = "rgba(255, 255, 255, 0.3)";
-        ctx.strokeStyle = "rgba(255, 255, 255, 0)";
-        ctx.stroke();
-        ctx.fill();
-        angl = Math.PI + Math.atan((extendedPoint.x - extendedPoint1.x) / extendedPoint1.y);
-        if (lkln.checked == true) {
-            cntn.style.cssText = 'transform: skewX(' + angl + 'rad);';
-        }
-
-    }
-    var xyt = [0];
 
         function setupt(x, y, d) {
 
@@ -538,37 +491,34 @@ function actStart() {
                 x: 0,
                 y: 0
             };
-
-            if ((xst[3] == xst[0]) && (xst[2] != xst[1])) {
-                xyq1.x = xst[0];
-                xyq1.y = yst[1] + ((xst[0] - xst[1]) / (xst[1] - xst[2])) * (yst[1] - yst[2]);
-            } else if ((xst[3] != xst[0]) && (xst[2] == xst[1])) {
+			let infn=((xst[3] == xst[1]) && (xst[2] == xst[0]))?true:false; 
+            if ((xst[3] == xst[1]) && (xst[2] != xst[0])) {
                 xyq1.x = xst[1];
-                xyq1.y = yst[0] + ((xst[1] - xst[0]) / (xst[0] - xst[3])) * (yst[0] - yst[3]);
-            } else if ((xst[3] == xst[0]) && (xst[2] == xst[1])) {
-                xyq1.x = x;
-            } else {
-
-                var m1 = (yst[3] - yst[0]) / (xst[3] - xst[0]);
-                var m2 = (yst[2] - yst[1]) / (xst[2] - xst[1]);
-                var mvrt = (tdys[1] - tdys[0]) / (tdxs[1] - tdxs[0]);
-                var A = numeric.rep([2, n + 1], 1);
-                A = [
-                    [1, -1],
-                    [m1, -m2]
-                ];
-                var res = [
-                    [xst[2] - xst[0]],
-                    [yst[2] - yst[0]]
-                ];
-                var g12 = numeric.solve(A, res);
-                var xq1 = xst[0] + g12[0];
-                var yq1 = yst[0] + g12[0] * m1;
-                //var xq2=xst[2]+g12[1];
-                //var yq2=yst[2]+g12[1]*m2;
-                xyq1.x = xq1;
-                xyq1.y = yq1;
-
+                xyq1.y = yst[0] + ((xst[1] - xst[0]) / (xst[0] - xst[2])) * (yst[0] - yst[2]);
+            } else if ((xst[3] != xst[1]) && (xst[2] == xst[0])) {
+                xyq1.x = xst[0];
+                xyq1.y = yst[1] + ((xst[0] - xst[1]) / (xst[1] - xst[3])) * (yst[1] - yst[3]);
+            } else if (!infn)
+			{
+			var m1 = (yst[3] - yst[0]) / (xst[3] - xst[0]);
+			var m2 = (yst[2] - yst[1]) / (xst[2] - xst[1]);
+			var mvrt = (tdys[1] - tdys[0]) / (tdxs[1] - tdxs[0]);
+			var A = numeric.rep([2, n + 1], 1);
+			A = [
+				[1, -1],
+				[m1, -m2]
+			];
+			var res = [
+				[xst[2] - xst[0]],
+				[yst[2] - yst[0]]
+			];
+			var g12 = numeric.solve(A, res);
+			var xq1 = xst[0] + g12[0];
+			var yq1 = yst[0] + g12[0] * m1;
+			//var xq2=xst[2]+g12[1];
+			//var yq2=yst[2]+g12[1]*m2;
+			xyq1.x = xq1;
+			xyq1.y = yq1;
             }
 
             /*var dn = [x-xq1,y-yq1];
@@ -578,14 +528,17 @@ function actStart() {
             ctx.beginPath();
             ctx.strokeStyle = "MediumBlue";
             ctx.lineWidth = 0.7;
-            extendedPoint = toBorder(xyq1, xy, 0, canvas.clientWidth, canvas.clientHeight, 0);
+
+			if(!infn){
+			
+			            extendedPoint = toBorder(xyq1, xy, 0, canvas.clientWidth, canvas.clientHeight, 0);
             ctx.moveTo(extendedPoint.x, extendedPoint.y);
 
             extendedPoint1 = toBorder(xy, xyq1, 0, canvas.clientWidth, canvas.clientHeight, 0);
             ctx.lineTo(extendedPoint1.x, extendedPoint1.y);
 
             ctx.stroke();
-
+			
             ctx.beginPath();
 
             var dp = -(x - xyq1.x) / Math.abs(x - xyq1.x);
@@ -599,7 +552,7 @@ function actStart() {
                 y: tdy
             };
 
-            ctx.moveTo(extendedPoint.x, extendedPoint.y);
+            ctx.moveTo(	extendedPoint.x, extendedPoint.y);
             extendedPoint2 = toBorder(xyq1, tdxy, 0, canvas.clientWidth, canvas.clientHeight, 0);
             ctx.lineTo(extendedPoint2.x, extendedPoint2.y);
             extendedPoint3 = toBorder(tdxy, xyq1, 0, canvas.clientWidth, canvas.clientHeight, 0);
@@ -609,9 +562,18 @@ function actStart() {
             ctx.strokeStyle = "rgba(255, 255, 255, 0)";
             ctx.stroke();
             ctx.fill();
+			//let calc=Math.asin(Math.abs(extendedPoint1.y-extendedPoint.y)/Math.sqrt((extendedPoint1.x-extendedPoint.x)*(extendedPoint1.x-extendedPoint.x)+(extendedPoint1.y-extendedPoint.y)*(extendedPoint1.y-extendedPoint.y)));
+			//angl =(y<yq1||x<xq1||xyq1.y<tdxy.y)?-calc:calc; //SkewY attempt
+			angl =Math.atan2(y-tdy,tdx-x)-0.5*Math.PI;
+			}else{
+			ctx.moveTo(0, y);
+			ctx.lineTo(canvas.clientWidth, y);
+			ctx.stroke();
+			angl=0;
+			}
+			
         }
-
-}
+    }
 </script>
 <style>
 .container {
