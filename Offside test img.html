@@ -207,21 +207,21 @@ function actStart() {
     Source: https: //stackoverflow.com/a/45056039 - Blindman67
 
         function both(p) {
-            prepare_lines(ctx2, points, true);
+            prepare_lines(ctx2, points);
             draw_canvas(ctx, ctx1, ctx2);
             setupt(p.x, p.y, d);
             setup(p.x, p.y, d);
         }
 
     function lit(p) {
-        prepare_lines(ctx2, points, true);
+        prepare_lines(ctx2, points);
         draw_canvas(ctx, ctx1, ctx2);
         setupt(p.x, p.y, d);
 
     }
 
     function li(p) {
-        prepare_lines(ctx2, points, true);
+        prepare_lines(ctx2, points);
         draw_canvas(ctx, ctx1, ctx2);
         setup(p.x, p.y, d);
 
@@ -309,7 +309,7 @@ function actStart() {
             points[drag][0] = p.x;
             points[drag][1] = p.y;
 
-            prepare_lines(ctx2, points, true);
+            prepare_lines(ctx2, points);
             draw_canvas(ctx, ctx1, ctx2);
 
         }
@@ -369,11 +369,11 @@ function actStart() {
         drag = null;
     }, false);
 
-    function prepare_lines(ctx, p, with_line) {
+    function prepare_lines(ctx, p) {
         ctx.save();
         ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
-        if (with_line == true) {
+
             ctx.beginPath();
             ctx.moveTo(p[0][0], p[0][1]);
             for (var i = 1; i <
@@ -383,7 +383,6 @@ function actStart() {
             ctx.closePath();
             ctx.strokeStyle = "black";
             ctx.stroke();
-        }
 
         ctx.strokeStyle = 'cyan';
         for (var i = 0; i <
