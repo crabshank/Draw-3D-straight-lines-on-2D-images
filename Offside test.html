@@ -145,27 +145,33 @@
         var d = 1;
         //console.log(vid);
 
-        var theta = 5 * (Math.PI / 180);
-        var thetav = 0.05 * (Math.PI / 180);
+    var theta = 0;
+    var thetav = 0;
 
-        function gmi() {
+    function gmi() {
 
-            theta -= 0.1 * (Math.PI / 180);
-            thetav -= 0.01 * (Math.PI / 180);
-            if (theta < 0) {
-                theta = 0;
-            }
-
-             switcher();
+        theta -= 0.007 * (Math.PI / 180);
+        thetav -= 0.0065 * (Math.PI / 180);
+        if (thetav < 0) {
+            thetav = 0;
+        } 
+		if (theta < 0) {
+            theta = 0;
         }
+	switcher();
+    }
 
-        function gpl() {
+    function gpl() {
 
-            theta += 0.1 * (Math.PI / 180);
-            thetav += 0.01 * (Math.PI / 180);
-
-             switcher();
+        theta += 0.007 * (Math.PI / 180);
+        thetav += 0.0065 * (Math.PI / 180);
+		
+		if (theta < 0) {
+            theta = 0;
         }
+		
+	switcher();
+    }
 
         function cvsTog() {
             let tmp_cvs = document.getElementsByTagName('CANVAS');
