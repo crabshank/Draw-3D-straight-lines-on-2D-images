@@ -3,8 +3,8 @@
 
 <head>
 <meta charset="utf-8">
-<script src="jquery-3.4.1.min.js"></script>
-<script type="text/javascript" src="numeric-1.2.6.min.js"></script>
+<script src="jquery-3.6.0.min.js"></script>
+<script type="text/javascript" src="numeric-1.2.6_stripped.js"></script>
 </head>
 
 <body>
@@ -34,14 +34,6 @@ var p = {
 };
 var lkln = document.getElementById('lkl');
 
-		lkln.oninput = function() {
-			if (!lkln.checked) {
-				cntn.style.cssText = '';
-			} else if (scr>1) {
-				cntn.style.cssText =  'transform: rotate(' + angl + 'rad);';
-			}
-			switcher();
-		}
 var v_tstImg = document.getElementById('tstImg');
 v_tstImg.addEventListener('change', handleFile, false);
 var ctx_tmp = document.getElementById('canvas').getContext('2d');
@@ -133,14 +125,16 @@ function actStart() {
     var canvas2 = document.createElement('canvas');
 
     var ctx2 = canvas2.getContext('2d');
-
+	
+	var lf=vid.offsetLeft+vid.clientLeft;
+	var tp=vid.offsetTop+vid.clientTop;
     var points = [
-        [vid.clientWidth * 0.2, vid.clientHeight * 0.8],
-        [vid.clientWidth * 0.8, vid.clientHeight * 0.8],
-        [vid.clientWidth * 0.8, vid.clientHeight * 0.2],
-        [vid.clientWidth * 0.2, vid.clientHeight * 0.2],
-        [vid.clientWidth * 0.4, vid.clientHeight * 0.2],
-        [vid.clientWidth * 0.5, vid.clientHeight * 0.6]
+        [lf+vid.clientWidth * 0.2, tp+vid.clientHeight * 0.8],
+        [lf+vid.clientWidth * 0.8, tp+vid.clientHeight * 0.8],
+        [lf+vid.clientWidth * 0.8, tp+vid.clientHeight * 0.2],
+        [lf+vid.clientWidth * 0.2, tp+vid.clientHeight * 0.2],
+        [lf+vid.clientWidth * 0.4, tp+vid.clientHeight * 0.2],
+        [lf+vid.clientWidth * 0.5, tp+vid.clientHeight * 0.6]
     ];
 
     prepare_lines(ctx2, points);
@@ -177,7 +171,7 @@ function actStart() {
             y: dy
         }
     }
-    Source: https: //stackoverflow.com/a/45056039 - Blindman67
+    /*Source: https://stackoverflow.com/a/45056039 - Blindman67*/
 
 
             function both(p) {
@@ -225,6 +219,15 @@ function actStart() {
 					}
 
 		}
+				lkln.oninput = function() {
+			if (!lkln.checked) {
+				cntn.style.cssText = '';
+			} else if (scr>1) {
+				cntn.style.cssText =  'transform: rotate(' + angl + 'rad);';
+			}
+			switcher();
+		}
+var v_tstI
 
     canvas.addEventListener("mousedown", function(event) {
 
@@ -379,8 +382,6 @@ function actStart() {
 
     var mvrt = 0;
 
-            var mvrt = 0;	
-
         function setup(x, y, d) {
             var n = 1;
 
@@ -461,13 +462,10 @@ function actStart() {
 			angl = Math.atan2(y-yq1,xq1-x)-0.5*Math.PI;
 			}else{
 			ctx.moveTo(x, 0);
-			ctx.lineTo(x,canvas.clientHeight);
+			ctx.lineTo(x,canvas.clientHeight+canvas.offsetTop+canvas.clientTop);
 			ctx.stroke();
 			angl =0;
 			}
-
-        
-
         }
 
         function setupt(x, y, d) {
@@ -498,13 +496,7 @@ function actStart() {
                 y: 0
             };
 			let infn=((xst[3] == xst[1]) && (xst[2] == xst[0]))?true:false; 
-            if ((xst[3] == xst[1]) && (xst[2] != xst[0])) {
-                xyq1.x = xst[1];
-                xyq1.y = yst[0] + ((xst[1] - xst[0]) / (xst[0] - xst[2])) * (yst[0] - yst[2]);
-            } else if ((xst[3] != xst[1]) && (xst[2] == xst[0])) {
-                xyq1.x = xst[0];
-                xyq1.y = yst[1] + ((xst[0] - xst[1]) / (xst[1] - xst[3])) * (yst[1] - yst[3]);
-            } else if (!infn)
+ if (!infn)
 			{
 			var m1 = (yst[3] - yst[0]) / (xst[3] - xst[0]);
 			var m2 = (yst[2] - yst[1]) / (xst[2] - xst[1]);
@@ -573,7 +565,7 @@ function actStart() {
 			angl =Math.atan2(y-tdy,tdx-x)-0.5*Math.PI;
 			}else{
 			ctx.moveTo(0, y);
-			ctx.lineTo(canvas.clientWidth, y);
+			ctx.lineTo(canvas.clientWidth+canvas.offsetLeft+canvas.clientLeft, y);
 			ctx.stroke();
 			angl=0;
 			}
