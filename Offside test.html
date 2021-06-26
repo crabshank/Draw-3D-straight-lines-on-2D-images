@@ -459,7 +459,7 @@
 
         var mvrt = 0;	
 
-     function setup(x, y, d) {
+   function setup(x, y, d) {
             var n = 1;
 
             var xy = {
@@ -520,7 +520,7 @@
 
             var tdy = Math.sin(d * dp * theta) * (x - xyq1.x) + Math.cos(d * dp * theta) * (y - xyq1.y) + xyq1.y;
 
-           
+           			angl = Math.atan2(y-yq1,xq1-x)-0.5*Math.PI;
 	if(theta!==0){
 		   var tdxy = {
                 x: tdx,
@@ -538,8 +538,6 @@
             ctx.strokeStyle = "rgba(255, 255, 255, 0)";
             ctx.stroke();
             ctx.fill();
-			//angl = Math.PI + Math.atan2((extendedPoint.x - extendedPoint1.x) , extendedPoint1.y); //SkewX
-			angl = Math.atan2(y-yq1,xq1-x)-0.5*Math.PI;
 			}
 			}else{
 			ctx.moveTo(x, 0);
@@ -625,7 +623,7 @@
             var tdx = Math.cos(d * dp * thetav) * (x - xyq1.x) - Math.sin(d * dp * thetav) * (y - xyq1.y) + xyq1.x;
 
             var tdy = Math.sin(d * dp * thetav) * (x - xyq1.x) + Math.cos(d * dp * thetav) * (y - xyq1.y) + xyq1.y;
-
+			angl =Math.atan2(y-tdy,tdx-x)-0.5*Math.PI;
 			if(thetav!==0){
 			            var tdxy = {
                 x: tdx,
@@ -642,9 +640,6 @@
             ctx.strokeStyle = "rgba(255, 255, 255, 0)";
             ctx.stroke();
             ctx.fill();
-			//let calc=Math.asin(Math.abs(extendedPoint1.y-extendedPoint.y)/Math.sqrt((extendedPoint1.x-extendedPoint.x)*(extendedPoint1.x-extendedPoint.x)+(extendedPoint1.y-extendedPoint.y)*(extendedPoint1.y-extendedPoint.y)));
-			//angl =(y<yq1||x<xq1||xyq1.y<tdxy.y)?-calc:calc; //SkewY attempt
-			angl =Math.atan2(y-tdy,tdx-x)-0.5*Math.PI;
 			}
 			}else{
 			ctx.moveTo(0, y);
