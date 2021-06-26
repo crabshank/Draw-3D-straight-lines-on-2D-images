@@ -528,9 +528,9 @@ function changeValue()
             var dp = -(x - xyq1.x) / Math.abs(x - xyq1.x);
 
             var tdx = Math.cos(d * dp * theta) * (x - xyq1.x) - Math.sin(d * dp * theta) * (y - xyq1.y) + xyq1.x;
-				tdx=Math.max(0,tdx);
+
             var tdy = Math.sin(d * dp * theta) * (x - xyq1.x) + Math.cos(d * dp * theta) * (y - xyq1.y) + xyq1.y;
-			tdy=Math.max(0,tdy);
+
            
 	if(theta!==0){
 		   var tdxy = {
@@ -634,9 +634,8 @@ function changeValue()
             var dp = -(x - xyq1.x) / Math.abs(x - xyq1.x);
 
             var tdx = Math.cos(d * dp * thetav) * (x - xyq1.x) - Math.sin(d * dp * thetav) * (y - xyq1.y) + xyq1.x;
-				tdx=Math.max(0,tdx);
+
             var tdy = Math.sin(d * dp * thetav) * (x - xyq1.x) + Math.cos(d * dp * thetav) * (y - xyq1.y) + xyq1.y;
-				tdy=Math.max(0,tdy);
 
 			if(thetav!==0){
 			            var tdxy = {
