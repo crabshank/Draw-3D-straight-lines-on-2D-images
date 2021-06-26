@@ -7,7 +7,7 @@
 <script type="text/javascript" src="numeric-1.2.6_stripped.js"></script>
 </head>
 
-<body>
+<body style="overflow: scroll;">
 <main style="display: -webkit-inline-box;">
 <section style="display: table-caption;">
 <input id="tstImg" type="file" accept="image/*"/>
@@ -24,6 +24,7 @@
 </main>
 
 <script>
+var OG_cbr;
 var cntn = document.getElementsByClassName('container')[0];
     var scr = 0;
 
@@ -49,8 +50,8 @@ function handleFile(e) {
         ctx_tmp.canvas.height = imge.height;
         ctx_tmp.drawImage(imge, 0, 0, imge.width, imge.height);
 
-        var frame_data0 =
-            ctx_tmp.getImageData(0, 0, ctx_tmp.canvas.width, ctx_tmp.canvas.height);
+        var frame_data0 =ctx_tmp.getImageData(0, 0, ctx_tmp.canvas.width, ctx_tmp.canvas.height);
+		OG_cbr=cntn.getBoundingClientRect();
         actStart();
     }, false);
     imge.src = url;
@@ -187,6 +188,8 @@ function actStart() {
             setupt(p.x, p.y, d);
 			if (lkln.checked == true && scr>1)  {
                cntn.style.cssText = 'transform: rotate(' + angl + 'rad);';
+			   let cbr=cntn.getBoundingClientRect();
+               cntn.style.cssText = 'transform: rotate(' + angl + 'rad) translate('+(cbr.left-OG_cbr.left)+'px,'+(cbr.top-OG_cbr.top)+'px);';
             }
         }
 
@@ -195,7 +198,9 @@ function actStart() {
             draw_canvas(ctx, ctx1, ctx2);
             setup(p.x, p.y, d);
 			if (lkln.checked == true && scr>1)  {
-               cntn.style.cssText =  'transform: rotate(' + angl + 'rad);';
+               cntn.style.cssText = 'transform: rotate(' + angl + 'rad);';
+			   let cbr=cntn.getBoundingClientRect();
+               cntn.style.cssText = 'transform: rotate(' + angl + 'rad) translate('+(OG_cbr.left-cbr.left)+'px,'+(OG_cbr.top-cbr.top)+'px);';
             }
 
         }
@@ -223,7 +228,9 @@ function actStart() {
 			if (!lkln.checked) {
 				cntn.style.cssText = '';
 			} else if (scr>1) {
-				cntn.style.cssText =  'transform: rotate(' + angl + 'rad);';
+               cntn.style.cssText = 'transform: rotate(' + angl + 'rad);';
+			   let cbr=cntn.getBoundingClientRect();
+               cntn.style.cssText = 'transform: rotate(' + angl + 'rad) translate('+(OG_cbr.left-cbr.left)+'px,'+(OG_cbr.top-cbr.top)+'px);';
 			}
 			switcher();
 		}
@@ -365,7 +372,9 @@ var v_tstI
                 let o_x = event.clientX - rect.left;
                 let o_y = event.clientY - rect.top;
                 if (scr>1) {
-				cntn.style.cssText =  'transform: rotate(' + angl + 'rad);';
+               cntn.style.cssText = 'transform: rotate(' + angl + 'rad);';
+			   let cbr=cntn.getBoundingClientRect();
+               cntn.style.cssText = 'transform: rotate(' + angl + 'rad) translate('+(OG_cbr.left-cbr.left)+'px,'+(OG_cbr.top-cbr.top)+'px);';
 				}
                 return {
                     x: o_x,
@@ -546,7 +555,7 @@ var v_tstI
             var tdx = Math.cos(d * dp * thetav) * (x - xyq1.x) - Math.sin(d * dp * thetav) * (y - xyq1.y) + xyq1.x;
 
             var tdy = Math.sin(d * dp * thetav) * (x - xyq1.x) + Math.cos(d * dp * thetav) * (y - xyq1.y) + xyq1.y;
-			angl =Math.atan2(y-tdy,tdx-x)-0.5*Math.PI;
+           			angl = Math.atan2(y-yq1,xq1-x)-0.5*Math.PI;
 			if(thetav!==0){
 			            var tdxy = {
                 x: tdx,
