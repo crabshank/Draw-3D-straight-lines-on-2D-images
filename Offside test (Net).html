@@ -470,7 +470,7 @@ function changeValue()
 
         var mvrt = 0;	
 
-        function setup(x, y, d) {
+     function setup(x, y, d) {
             var n = 1;
 
             var xy = {
@@ -524,17 +524,20 @@ function changeValue()
             ctx.lineTo(extendedPoint1.x, extendedPoint1.y);
 
             ctx.stroke();
-			 ctx.beginPath();
+
             var dp = -(x - xyq1.x) / Math.abs(x - xyq1.x);
 
             var tdx = Math.cos(d * dp * theta) * (x - xyq1.x) - Math.sin(d * dp * theta) * (y - xyq1.y) + xyq1.x;
-
+				tdx=Math.max(0,tdx);
             var tdy = Math.sin(d * dp * theta) * (x - xyq1.x) + Math.cos(d * dp * theta) * (y - xyq1.y) + xyq1.y;
-            var tdxy = {
+			tdy=Math.max(0,tdy);
+           
+	if(theta!==0){
+		   var tdxy = {
                 x: tdx,
                 y: tdy
             };
-
+			 ctx.beginPath();
             ctx.moveTo(extendedPoint.x, extendedPoint.y);
             extendedPoint2 = toBorder(xyq1, tdxy, 0, canvas.clientWidth, canvas.clientHeight, 0);
             ctx.lineTo(extendedPoint2.x, extendedPoint2.y);
@@ -548,6 +551,7 @@ function changeValue()
             ctx.fill();
 			//angl = Math.PI + Math.atan2((extendedPoint.x - extendedPoint1.x) , extendedPoint1.y); //SkewX
 			angl = Math.atan2(y-yq1,xq1-x)-0.5*Math.PI;
+			}
 			}else{
 			ctx.moveTo(x, 0);
 			ctx.lineTo(x,canvas.clientHeight+canvas.offsetTop+canvas.clientTop);
@@ -625,19 +629,21 @@ function changeValue()
 
             ctx.stroke();
 			
-            ctx.beginPath();
+
 
             var dp = -(x - xyq1.x) / Math.abs(x - xyq1.x);
 
             var tdx = Math.cos(d * dp * thetav) * (x - xyq1.x) - Math.sin(d * dp * thetav) * (y - xyq1.y) + xyq1.x;
-
+				tdx=Math.max(0,tdx);
             var tdy = Math.sin(d * dp * thetav) * (x - xyq1.x) + Math.cos(d * dp * thetav) * (y - xyq1.y) + xyq1.y;
+				tdy=Math.max(0,tdy);
 
-            var tdxy = {
+			if(thetav!==0){
+			            var tdxy = {
                 x: tdx,
                 y: tdy
             };
-
+            ctx.beginPath();
             ctx.moveTo(	extendedPoint.x, extendedPoint.y);
             extendedPoint2 = toBorder(xyq1, tdxy, 0, canvas.clientWidth, canvas.clientHeight, 0);
             ctx.lineTo(extendedPoint2.x, extendedPoint2.y);
@@ -651,13 +657,13 @@ function changeValue()
 			//let calc=Math.asin(Math.abs(extendedPoint1.y-extendedPoint.y)/Math.sqrt((extendedPoint1.x-extendedPoint.x)*(extendedPoint1.x-extendedPoint.x)+(extendedPoint1.y-extendedPoint.y)*(extendedPoint1.y-extendedPoint.y)));
 			//angl =(y<yq1||x<xq1||xyq1.y<tdxy.y)?-calc:calc; //SkewY attempt
 			angl =Math.atan2(y-tdy,tdx-x)-0.5*Math.PI;
+			}
 			}else{
 			ctx.moveTo(0, y);
 			ctx.lineTo(canvas.clientWidth+canvas.offsetLeft+canvas.clientLeft, y);
 			ctx.stroke();
 			angl=0;
 			}
-			
         }
     }
 </script>
