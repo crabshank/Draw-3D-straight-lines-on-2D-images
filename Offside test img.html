@@ -84,6 +84,7 @@ function handleFile(e) {
     var imge = document.getElementById('imge');
 
     imge.addEventListener('load', function() {
+	ctx_tmp.clearRect(0, 0, ctx_tmp.canvas.width, ctx_tmp.canvas.height);
         ctx_tmp.canvas.width = imge.width;
         ctx_tmp.canvas.height = imge.height;
         ctx_tmp.drawImage(imge, 0, 0, imge.width, imge.height);
