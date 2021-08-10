@@ -15,7 +15,13 @@
 <button id="dflip" type="button" >Flip plane</button>
 <button  id="gmi" type="button" >Plane height-</button>
 <button id="gpl" type="button" >Plane height+</button>
-<button id="cvsTog" type="button">Create/Delete canvas</button><br>
+<button id="cvsTog" type="button">Create/Delete canvas</button>
+<button id="cRedSw" type="button" style="background: mediumblue !important;">Blue</button><br><br>
+Horizontal Distance<br><input id="refDistH" value="" type="number" style="max-width: max-content !important; min-width: 75px !important; line-height: 2ch !important; padding: 2px 0px 2px 4px !important; display: initial !important; visibility: initial !important; background-color: #cf17ff !important; border-width: 0px !important; border-style: outset !important; border-color: black !important; color: white !important;"><br>
+<label for="refDistH" id="refDistHLbl"></label><br><br>
+Vertical Distance<br><input id="refDistV" value="" type="number" style="max-width: max-content !important; min-width: 75px !important; line-height: 2ch !important; padding: 2px 0px 2px 4px !important; display: initial !important; visibility: initial !important; background-color: black !important; border-width: 0px !important; border-style: outset !important; border-color: black!important; color: white !important;"><br>
+<label for="refDistV" id="refDistVLbl"></label><br><br>
+Distance between intersections: <br><label  id="refDistHVLbl" title="Distance between intersections"></label><br><br>
 <input id="lkl" type="checkbox" >Auto-straighten plane</input>
 </section>
 
@@ -28,11 +34,42 @@
 
 <script>
 var cntn = document.getElementsByClassName('container')[0];
+var redSw=document.getElementById('cRedSw');
+var rfH=document.getElementById('refDistH');
+var rfHLbl=document.getElementById('refDistHLbl');
+var rfV=document.getElementById('refDistV');
+var rfVLbl=document.getElementById('refDistVLbl');
+var rfHVLbl=document.getElementById('refDistHVLbl');
 var OG_cbr;
 var angl = 0;
+var angls_h = {
+red: null,
+blue: null
+};
+var angls_v = {
+red: null,
+blue: null
+};
+var refAngls_h = {
+red: null,
+blue: null
+};
+var refAngls_v = {
+red: null,
+blue: null
+};
 var p = {
     x: 0,
     y: 0
+};
+var currRed=false;
+var lastBlue_xy={
+x: null,
+y: null
+};
+var lastRed_xy={
+x: null,
+y: null
 };
 var lkln = document.getElementById('lkl');
 var vid = document.getElementById('lkl');
@@ -86,6 +123,24 @@ function changeValue()
         document.getElementById('cvsTog').onclick = function() {
             cvsTog();
         }
+		
+			document.getElementById('refDistH').oninput = function() {
+        switcher();
+    }        
+	document.getElementById('refDistV').oninput = function() {
+        switcher();
+    }    
+
+	redSw.onclick = function() {
+	if(currRed){
+	   redSw.style.setProperty('background','mediumblue','important');
+	}else{
+	   redSw.style.setProperty('background','#f00000','important');
+	}
+     
+		redSw.innerText=(currRed)?"Blue":"Red";
+		currRed=(currRed)?false:true;
+    }
 
         var vid = $("video#vd1")[0];
         var swtch = vid.playbackRate;
@@ -158,7 +213,7 @@ function changeValue()
     function gmi() {
 
         theta -= 0.007 * (Math.PI / 180);
-        thetav -= 0.0065 * (Math.PI / 180);
+        thetav -= 0.007 * (Math.PI / 180);
         if (thetav < 0) {
             thetav = 0;
         } 
@@ -171,7 +226,7 @@ function changeValue()
     function gpl() {
 
         theta += 0.007 * (Math.PI / 180);
-        thetav += 0.0065 * (Math.PI / 180);
+        thetav += 0.007 * (Math.PI / 180);
 		
 		if (theta < 0) {
             theta = 0;
@@ -265,17 +320,129 @@ function changeValue()
         }
       /* Source: https://stackoverflow.com/a/45056039 - Blindman67*/
 
-            function both(p) {
+                     function both(p) {
+			var outH=0;
+			var outV=0;
                 prepare_lines(ctx2, points);
                 draw_canvas(ctx, ctx1, ctx2);
-                setupt(p.x, p.y, d);
-                setup(p.x, p.y, d);
+				
+				if(currRed){
+					lastRed_xy.x=p.x;
+					lastRed_xy.y=p.y;
+					
+					setupt(p.x, p.y, d,true,false);
+					setup(p.x, p.y, d,true,false);
+					
+					if(lastBlue_xy.x!=null){
+						setupt(lastBlue_xy.x, lastBlue_xy.y, d,false,false);
+						setup(lastBlue_xy.x, lastBlue_xy.y, d,false,false);
+					}
+				}else{
+					lastBlue_xy.x=p.x;
+					lastBlue_xy.y=p.y;
+					
+					setupt(p.x, p.y, d,false,false);
+					setup(p.x, p.y, d,false,false);
+					
+					if(lastRed_xy.x!=null){
+						setupt(lastRed_xy.x, lastRed_xy.y, d,true,false);
+						setup(lastRed_xy.x, lastRed_xy.y, d,true,false);
+					}
+				}
+				
+				if(!Number.isNaN(rfV.valueAsNumber)){
+				
+				if(angls_v.red!=null && angls_v.red!=0 && angls_v.blue!=null && angls_v.blue!=0){
+					let diff=Math.abs(angls_v.red-angls_v.blue);
+					setupt(xs[3],ys[3], d,false,true);
+					setupt(xs[0],ys[0], d,true,true);
+					let refDiff=Math.abs(refAngls_v.red-refAngls_v.blue);
+					let diff2=(refDiff==0)?0:rfV.valueAsNumber*(diff/refDiff);
+					diff2=Math.abs(diff2);
+					diff2=(angls_h.red<=angls_h.blue)?diff2:-diff2;
+					outV=diff2;
+					rfVLbl.innerText=diff2.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false});
+				}else if(angls_v.red==0  && angls_v.blue==0){
+										let a=Math.abs(xs[2]-xs[3]);
+					let b=lastRed_xy.y-lastBlue_xy.y;
+					let dist_v=(a==0)?0:b*(rfV.valueAsNumber/a);
+					outV=dist_v;
+					rfVLbl.innerText=dist_v.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false});
+				}		
+				}
+
+		if(!Number.isNaN(rfH.valueAsNumber)){
+				if(angls_h.red!=null && angls_h.red!=0 && angls_h.blue!=null && angls_h.blue!=0){
+										let diff=Math.abs(angls_h.red-angls_h.blue);
+					setup(xs[3],ys[3], d,false,true);
+					setup(xs[2],ys[2], d,true,true);
+					let refDiff=Math.abs(refAngls_h.red-refAngls_h.blue);
+					let diff2=(refDiff==0)?0:rfH.valueAsNumber*(diff/refDiff);
+					diff2=Math.abs(diff2);
+					diff2=(angls_h.red>=angls_h.blue)?diff2:-diff2;
+					outH=diff2;
+					rfHLbl.innerText=diff2.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false});
+				}else if(angls_h.red==0  && angls_h.blue==0){
+										let a=Math.abs(xs[2]-xs[3]);
+					let b=lastRed_xy.x-lastBlue_xy.x;
+					let dist_h=(a==0)?0:b*(rfH.valueAsNumber/a);
+					outH=dist_h;
+					rfHLbl.innerText=dist_h.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false});
+				}
+					
             }
+			
+			if(!Number.isNaN(rfH.valueAsNumber) && !Number.isNaN(rfV.valueAsNumber)){
+			rfHVLbl.innerText='('+(Math.sqrt(outH*outH+outV*outV)).toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false})+')';
+			}
+}
 
         function lit(p) {
             prepare_lines(ctx2, points);
             draw_canvas(ctx, ctx1, ctx2);
-            setupt(p.x, p.y, d);
+            
+							if(currRed){
+					lastRed_xy.x=p.x;
+					lastRed_xy.y=p.y;
+					
+					setupt(p.x, p.y, d,true,false);
+					
+					if(lastBlue_xy.x!=null){
+						setupt(lastBlue_xy.x, lastBlue_xy.y, d,false,false);
+					}
+				}else{
+					lastBlue_xy.x=p.x;
+					lastBlue_xy.y=p.y;
+					
+					setupt(p.x, p.y, d,false,false);
+					
+					if(lastRed_xy.x!=null){
+						setupt(lastRed_xy.x, lastRed_xy.y, d,true,false);
+					}
+				}
+				
+				rfHLbl.innerText="";
+				rfHVLbl.innerText="";
+				
+				if(!Number.isNaN(rfV.valueAsNumber)){
+				
+				if(angls_v.red!=null && angls_v.red!=0 && angls_v.blue!=null && angls_v.blue!=0){
+					let diff=Math.abs(angls_v.red-angls_v.blue);
+					setupt(xs[3],ys[3], d,false,true);
+					setupt(xs[0],ys[0], d,true,true);
+					let refDiff=Math.abs(refAngls_v.red-refAngls_v.blue);
+					let diff2=(refDiff==0)?0:rfV.valueAsNumber*(diff/refDiff);
+					diff2=Math.abs(diff2);
+					diff2=(angls_h.red<=angls_h.blue)?diff2:-diff2;
+					rfVLbl.innerText=diff2.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false});
+				}else if(angls_v.red==0  && angls_v.blue==0){
+										let a=Math.abs(xs[2]-xs[3]);
+					let b=lastRed_xy.y-lastBlue_xy.y;
+					let dist_v=(a==0)?0:b*(rfV.valueAsNumber/a);
+					rfVLbl.innerText=dist_v.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false});
+				}		
+				}
+			
 			if (lkln.checked == true && scr>1)  {
                cntn.style.cssText = 'transform: rotate(' + angl + 'rad);';
 			   let cbr=cntn.getBoundingClientRect();
@@ -286,7 +453,49 @@ function changeValue()
         function li(p) {
             prepare_lines(ctx2, points);
             draw_canvas(ctx, ctx1, ctx2);
-            setup(p.x, p.y, d);
+            				if(currRed){
+					lastRed_xy.x=p.x;
+					lastRed_xy.y=p.y;
+					
+					setup(p.x, p.y, d,true,false);
+					
+					if(lastBlue_xy.x!=null){
+						setup(lastBlue_xy.x, lastBlue_xy.y, d,false,false);
+					}
+				}else{
+					lastBlue_xy.x=p.x;
+					lastBlue_xy.y=p.y;
+					
+					setup(p.x, p.y, d,false,false);
+					
+					if(lastRed_xy.x!=null){
+						setup(lastRed_xy.x, lastRed_xy.y, d,true,false);
+					}
+				}
+				
+				rfVLbl.innerText="";
+				rfHVLbl.innerText="";
+				
+		if(!Number.isNaN(rfH.valueAsNumber)){
+				if(angls_h.red!=null && angls_h.red!=0 && angls_h.blue!=null && angls_h.blue!=0){
+										let diff=Math.abs(angls_h.red-angls_h.blue);
+					setup(xs[3],ys[3], d,false,true);
+					setup(xs[2],ys[2], d,true,true);
+					let refDiff=Math.abs(refAngls_h.red-refAngls_h.blue);
+					let diff2=(refDiff==0)?0:rfH.valueAsNumber*(diff/refDiff);
+					diff2=Math.abs(diff2);
+					diff2=(angls_h.red>=angls_h.blue)?diff2:-diff2;
+					rfHLbl.innerText=diff2.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false});
+				}else if(angls_h.red==0  && angls_h.blue==0){
+										let a=Math.abs(xs[2]-xs[3]);
+					let b=lastRed_xy.x-lastBlue_xy.x;
+					let dist_h=(a==0)?0:b*(rfH.valueAsNumber/a);
+					rfHLbl.innerText=dist_h.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false});
+				}
+					
+            }
+			
+			
 			if (lkln.checked == true && scr>1)  {
                cntn.style.cssText = 'transform: rotate(' + angl + 'rad);';
 			   let cbr=cntn.getBoundingClientRect();
@@ -337,8 +546,7 @@ function changeValue()
             canvas2.height = vid.clientHeight;
             event.preventDefault();
             p = get_mouse_position(event);
-            for (let i = 0; i <
-                4; i++) {
+            for (let i = 0; i <4; i++) {
                 let x = points[i][0];
                 let y = points[i][1];
                 xs[i] = points[i][0];
@@ -388,25 +596,29 @@ function changeValue()
 
 
 
-        canvas.addEventListener("wheel", function(event) {
 
-            if (event.altKey) {
-                event.preventDefault();
-                if (event.deltaY / Math.abs(event.deltaY) <
-                    0) {
-                    gpl();
-                } else {
-                    gmi();
-                }
-            } else if (!event.ctrlKey) {
-                p = get_mouse_position(event);
+    canvas.addEventListener("wheel", function(event) {
 
-                scr = (scr + (event.deltaY / event.deltaY)) % 6;
-
-                switcher();
-
+        if (event.altKey) {
+            event.preventDefault();
+            if (event.deltaY / Math.abs(event.deltaY) < 0) {
+                gpl();
+            } else {
+                gmi();
             }
-        }, );
+        } else if (event.shiftKey) {
+		event.preventDefault();
+           redSw.click();
+        } else if (!event.ctrlKey) {
+		event.preventDefault();
+            p = get_mouse_position(event);
+
+            scr = (scr + (event.deltaY / event.deltaY)) % 6;
+
+            switcher();
+
+        }
+    }, );
 
         canvas.addEventListener("mouseup", function(event) {
             event.preventDefault();
@@ -431,10 +643,30 @@ function changeValue()
 
                 ctx.beginPath();
                 ctx.moveTo(p[0][0], p[0][1]);
-                for (var i = 1; i <
-                    4; i++) {
-                    ctx.lineTo(p[i][0], p[i][1]);
-                }
+                    ctx.lineTo(p[3][0], p[3][1]);
+
+                ctx.closePath();
+                ctx.strokeStyle = "#cf17ff";
+                ctx.stroke();                   
+
+				ctx.beginPath();
+                ctx.moveTo(p[1][0], p[1][1]);
+                    ctx.lineTo(p[2][0], p[2][1]);
+
+                ctx.closePath();
+                ctx.strokeStyle = "#cf17ff";
+                ctx.stroke();    
+
+				ctx.beginPath();
+                ctx.moveTo(p[3][0], p[3][1]);
+                    ctx.lineTo(p[2][0], p[2][1]);
+                ctx.closePath();
+                ctx.strokeStyle = "black";
+                ctx.stroke();
+				
+				ctx.beginPath();
+                ctx.moveTo(p[0][0], p[0][1]);
+                    ctx.lineTo(p[1][0], p[1][1]);
                 ctx.closePath();
                 ctx.strokeStyle = "black";
                 ctx.stroke();
@@ -482,7 +714,7 @@ function changeValue()
 
         var mvrt = 0;	
 
-   function setup(x, y, d) {
+   function setup(x, y, d,red,refAngl) {
             var n = 1;
 
             var xy = {
@@ -517,18 +749,18 @@ function changeValue()
                 var g12 = numeric.solve(A, res);
                 var xq1 = xs[0] + g12[0];
                 var yq1 = ys[0] + g12[0] * m1;
-                //var xq2=xs[2]+g12[1];
-                //var yq2=ys[2]+g12[1]*m2;
                 xyq1.x = xq1;
                 xyq1.y = yq1;
 
             }
 
+					if(!refAngl){
             ctx.beginPath();
-            ctx.strokeStyle = "MediumBlue";
+            ctx.strokeStyle =(red)?"#f00000": "mediumblue";
             ctx.lineWidth = 0.7;
-
+}
 			if (!infn){
+								if(!refAngl){
 			            extendedPoint = toBorder(xyq1, xy, 0, canvas.clientWidth, canvas.clientHeight, 0);
             ctx.moveTo(extendedPoint.x, extendedPoint.y);
 
@@ -536,6 +768,7 @@ function changeValue()
             ctx.lineTo(extendedPoint1.x, extendedPoint1.y);
 
             ctx.stroke();
+			}
 
             var dp = -(x - xyq1.x) / Math.abs(x - xyq1.x);
 
@@ -543,7 +776,24 @@ function changeValue()
 
             var tdy = Math.sin(d * dp * theta) * (x - xyq1.x) + Math.cos(d * dp * theta) * (y - xyq1.y) + xyq1.y;
 
-           			angl = Math.atan2(y-yq1,xq1-x)-0.5*Math.PI;
+           			let angl_h = Math.atan2(y- xyq1.y, xyq1.x-x)-0.5*Math.PI;
+								if(refAngl){
+													if(red){
+					refAngls_h.red=angl_h;
+					}else{
+					refAngls_h.blue=angl_h;
+					}
+								}else{		
+					if(red){
+					angls_h.red=angl_h;
+					}else{
+					angls_h.blue=angl_h;
+					}
+					
+					if(red==currRed){
+					angl=angl_h;
+					}
+			
 	if(theta!==0){
 		   var tdxy = {
                 x: tdx,
@@ -562,15 +812,33 @@ function changeValue()
             ctx.stroke();
             ctx.fill();
 			}
+			}
 			}else{
+				if(refAngl){
+					if(red){
+					refAngls_h.red=0;
+					}else{
+					refAngls_h.blue=0;
+					}
+				}else{
 			ctx.moveTo(x, 0);
 			ctx.lineTo(x,canvas.clientHeight+canvas.offsetTop+canvas.clientTop);
 			ctx.stroke();
-			angl =0;
+			//angl =0;
+			
+			if(red){
+					angls_h.red=0;
+					}else{
+					angls_h.blue=0;
+					}
+			if(red==currRed){
+					angl=0;
+			}
+			}
 			}
         }
 
-        function setupt(x, y, d) {
+        function setupt(x, y, d,red,refAngl) {
 
             var n = 1;
             alphat = [0];
@@ -615,22 +883,18 @@ function changeValue()
 			var g12 = numeric.solve(A, res);
 			var xq1 = xst[0] + g12[0];
 			var yq1 = yst[0] + g12[0] * m1;
-			//var xq2=xst[2]+g12[1];
-			//var yq2=yst[2]+g12[1]*m2;
 			xyq1.x = xq1;
 			xyq1.y = yq1;
             }
 
-            /*var dn = [x-xq1,y-yq1];
-            var dd=Math.sqrt(dn[0]*dn[0]+dn[1]+dn[1]);
-            var pv=[dn[0]/dd,dn[1]/dd];*/
-
+if(!refAngl){
             ctx.beginPath();
-            ctx.strokeStyle = "MediumBlue";
+            ctx.strokeStyle =(red)?"#f00000": "mediumblue";
             ctx.lineWidth = 0.7;
-
+}
 			if(!infn){
 			
+			if(!refAngl){
 			            extendedPoint = toBorder(xyq1, xy, 0, canvas.clientWidth, canvas.clientHeight, 0);
             ctx.moveTo(extendedPoint.x, extendedPoint.y);
 
@@ -638,6 +902,7 @@ function changeValue()
             ctx.lineTo(extendedPoint1.x, extendedPoint1.y);
 
             ctx.stroke();
+			}
 			
 
 
@@ -646,7 +911,26 @@ function changeValue()
             var tdx = Math.cos(d * dp * thetav) * (x - xyq1.x) - Math.sin(d * dp * thetav) * (y - xyq1.y) + xyq1.x;
 
             var tdy = Math.sin(d * dp * thetav) * (x - xyq1.x) + Math.cos(d * dp * thetav) * (y - xyq1.y) + xyq1.y;
-           			angl = Math.atan2(y-yq1,xq1-x)-0.5*Math.PI;
+           			let angl_v= Math.atan2(y- xyq1.y, xyq1.x-x)-0.5*Math.PI
+					
+					if(refAngl){
+					if(red){
+					refAngls_v.red=angl_v;
+					}else{
+					refAngls_v.blue=angl_v;
+					}
+					}else{
+					if(red && !refAngl){
+					angls_v.red=angl_v;
+					}else{
+					angls_v.blue=angl_v;
+					}
+					
+					if(red==currRed  && !refAngl){
+					angl=angl_v;
+					}
+					
+					
 			if(thetav!==0){
 			            var tdxy = {
                 x: tdx,
@@ -664,11 +948,29 @@ function changeValue()
             ctx.stroke();
             ctx.fill();
 			}
+			}
+			}else{
+			if(refAngl){
+								if(red){
+					refAngls_v.red=0;
+					}else{
+					refAngls_v.blue=0;
+					}
 			}else{
 			ctx.moveTo(0, y);
 			ctx.lineTo(canvas.clientWidth+canvas.offsetLeft+canvas.clientLeft, y);
 			ctx.stroke();
-			angl=0;
+			//angl =0;
+								if(red){
+					angls_v.red=0;
+					}else{
+					angls_v.blue=0;
+					}
+			
+			if(red==currRed){
+					angl=0;
+			}
+			}
 			}
         }
     }
