@@ -25,7 +25,6 @@ Distance between intersections: <br><label  id="refDistHVLbl" title="Distance be
 
 <section class="container">
 <img id="imge"></img>
-<canvas class="canvas" id="canvas"></canvas>
 </section>
 </main>
 
@@ -75,7 +74,6 @@ var lkln = document.getElementById('lkl');
 
 var v_tstImg = document.getElementById('tstImg');
 v_tstImg.addEventListener('change', handleFile, false);
-var ctx_tmp = document.getElementById('canvas').getContext('2d');
 
 function handleFile(e) {
     var mp_ct = 0;
@@ -84,14 +82,29 @@ function handleFile(e) {
     var imge = document.getElementById('imge');
 
     imge.addEventListener('load', function() {
-	ctx_tmp.clearRect(0, 0, ctx_tmp.canvas.width, ctx_tmp.canvas.height);
-        ctx_tmp.canvas.width = imge.width;
-        ctx_tmp.canvas.height = imge.height;
-        ctx_tmp.drawImage(imge, 0, 0, imge.width, imge.height);
 
-        var frame_data0 =ctx_tmp.getImageData(0, 0, ctx_tmp.canvas.width, ctx_tmp.canvas.height);
+
+       
 		OG_cbr=cntn.getBoundingClientRect();
-        actStart();
+		
+			            let tmp_cvs = [...document.getElementsByTagName('CANVAS')];
+
+            if (tmp_cvs.length > 0) {
+                for (i = 0; i < tmp_cvs.length; i++) {
+                    tmp_cvs[i].remove();
+                }
+            }
+			let cnvs=document.createElement('CANVAS');
+			cnvs.id='canvas';
+			cnvs.className='canvas';
+			this.parentElement.append(cnvs);
+        cnvs.width = this.width;
+        cnvs.height = this.height;
+		let ctx=cnvs.getContext('2d');
+		ctx.clearRect(0, 0, cnvs.width, cnvs.height);
+        ctx.drawImage(this, 0, 0, this.width, this.height);
+		
+actStart();
     }, false);
     imge.src = url;
 }
@@ -263,14 +276,14 @@ function actStart() {
 				if(!Number.isNaN(rfV.valueAsNumber)){
 				
 				if(angls_v.red!=null && angls_v.red!=0 && angls_v.blue!=null && angls_v.blue!=0){
-					let diff=Math.abs(angls_v.red-angls_v.blue);
 					setupt(xs[3],ys[3], d,false,true);
 					setupt(xs[0],ys[0], d,true,true);
+					let neg=((angls_v.blue-angls_v.red>=Math.PI)||(angls_v.red-angls_v.blue>=0))?true:false;
+					let diff=(angls_v.blue-angls_v.red>=Math.PI)?Math.abs(2*Math.PI-angls_v.blue+angls_v.red):Math.abs(angls_v.red-angls_v.blue);
 					let refDiff=Math.abs(refAngls_v.red-refAngls_v.blue);
 					let diff2=(refDiff==0)?0:rfV.valueAsNumber*(diff/refDiff);
 					diff2=Math.abs(diff2);
-					diff2=(angls_h.red<=angls_h.blue)?diff2:-diff2;
-					outV=diff2;
+					diff2=(neg)?-diff2:diff2;
 					rfVLbl.innerText=diff2.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false});
 				}else if(angls_v.red==0  && angls_v.blue==0){
 										let a=Math.abs(xs[2]-xs[3]);
@@ -283,14 +296,14 @@ function actStart() {
 
 		if(!Number.isNaN(rfH.valueAsNumber)){
 				if(angls_h.red!=null && angls_h.red!=0 && angls_h.blue!=null && angls_h.blue!=0){
-										let diff=Math.abs(angls_h.red-angls_h.blue);
 					setup(xs[3],ys[3], d,false,true);
 					setup(xs[2],ys[2], d,true,true);
+					let neg=((angls_h.blue-angls_h.red>=Math.PI)||(angls_h.red-angls_h.blue>=0))?false:true;
+					let diff=(angls_h.blue-angls_h.red>=Math.PI)?Math.abs(2*Math.PI-angls_h.blue+angls_h.red):Math.abs(angls_h.red-angls_h.blue);
 					let refDiff=Math.abs(refAngls_h.red-refAngls_h.blue);
 					let diff2=(refDiff==0)?0:rfH.valueAsNumber*(diff/refDiff);
 					diff2=Math.abs(diff2);
-					diff2=(angls_h.red>=angls_h.blue)?diff2:-diff2;
-					outH=diff2;
+					diff2=(neg)?-diff2:diff2;
 					rfHLbl.innerText=diff2.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false});
 				}else if(angls_h.red==0  && angls_h.blue==0){
 										let a=Math.abs(xs[2]-xs[3]);
@@ -337,13 +350,14 @@ function actStart() {
 				if(!Number.isNaN(rfV.valueAsNumber)){
 				
 				if(angls_v.red!=null && angls_v.red!=0 && angls_v.blue!=null && angls_v.blue!=0){
-					let diff=Math.abs(angls_v.red-angls_v.blue);
 					setupt(xs[3],ys[3], d,false,true);
 					setupt(xs[0],ys[0], d,true,true);
+					let neg=((angls_v.blue-angls_v.red>=Math.PI)||(angls_v.red-angls_v.blue>=0))?true:false;
+					let diff=(angls_v.blue-angls_v.red>=Math.PI)?Math.abs(2*Math.PI-angls_v.blue+angls_v.red):Math.abs(angls_v.red-angls_v.blue);
 					let refDiff=Math.abs(refAngls_v.red-refAngls_v.blue);
 					let diff2=(refDiff==0)?0:rfV.valueAsNumber*(diff/refDiff);
 					diff2=Math.abs(diff2);
-					diff2=(angls_h.red<=angls_h.blue)?diff2:-diff2;
+					diff2=(neg)?-diff2:diff2;
 					rfVLbl.innerText=diff2.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false});
 				}else if(angls_v.red==0  && angls_v.blue==0){
 										let a=Math.abs(xs[2]-xs[3]);
@@ -388,13 +402,14 @@ function actStart() {
 				
 		if(!Number.isNaN(rfH.valueAsNumber)){
 				if(angls_h.red!=null && angls_h.red!=0 && angls_h.blue!=null && angls_h.blue!=0){
-										let diff=Math.abs(angls_h.red-angls_h.blue);
 					setup(xs[3],ys[3], d,false,true);
 					setup(xs[2],ys[2], d,true,true);
+					let neg=((angls_h.blue-angls_h.red>=Math.PI)||(angls_h.red-angls_h.blue>=0))?false:true;
+					let diff=(angls_h.blue-angls_h.red>=Math.PI)?Math.abs(2*Math.PI-angls_h.blue+angls_h.red):Math.abs(angls_h.red-angls_h.blue);
 					let refDiff=Math.abs(refAngls_h.red-refAngls_h.blue);
 					let diff2=(refDiff==0)?0:rfH.valueAsNumber*(diff/refDiff);
 					diff2=Math.abs(diff2);
-					diff2=(angls_h.red>=angls_h.blue)?diff2:-diff2;
+					diff2=(neg)?-diff2:diff2;
 					rfHLbl.innerText=diff2.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false});
 				}else if(angls_h.red==0  && angls_h.blue==0){
 										let a=Math.abs(xs[2]-xs[3]);
@@ -684,7 +699,7 @@ function actStart() {
 
             var tdy = Math.sin(d * dp * theta) * (x - xyq1.x) + Math.cos(d * dp * theta) * (y - xyq1.y) + xyq1.y;
 
-           			let angl_h = Math.atan2(y- xyq1.y, xyq1.x-x)-0.5*Math.PI;
+           			let angl_h = Math.atan2(y- xyq1.y, xyq1.x-x);
 								if(refAngl){
 													if(red){
 					refAngls_h.red=angl_h;
@@ -699,7 +714,7 @@ function actStart() {
 					}
 					
 					if(red==currRed){
-					angl=angl_h;
+					angl=angl_h-0.5*Math.PI;
 					}
 			
 	if(theta!==0){
@@ -819,7 +834,8 @@ if(!refAngl){
             var tdx = Math.cos(d * dp * thetav) * (x - xyq1.x) - Math.sin(d * dp * thetav) * (y - xyq1.y) + xyq1.x;
 
             var tdy = Math.sin(d * dp * thetav) * (x - xyq1.x) + Math.cos(d * dp * thetav) * (y - xyq1.y) + xyq1.y;
-           			let angl_v= Math.atan2(y- xyq1.y, xyq1.x-x)-0.5*Math.PI
+
+           			let angl_v= Math.atan2(y- xyq1.y, xyq1.x-x);
 					
 					if(refAngl){
 					if(red){
@@ -835,7 +851,7 @@ if(!refAngl){
 					}
 					
 					if(red==currRed  && !refAngl){
-					angl=angl_v;
+					angl=angl_v-0.5*Math.PI;
 					}
 					
 					

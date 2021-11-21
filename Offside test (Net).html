@@ -320,7 +320,7 @@ function changeValue()
         }
       /* Source: https://stackoverflow.com/a/45056039 - Blindman67*/
 
-                     function both(p) {
+                           function both(p) {
 			var outH=0;
 			var outV=0;
                 prepare_lines(ctx2, points);
@@ -353,14 +353,14 @@ function changeValue()
 				if(!Number.isNaN(rfV.valueAsNumber)){
 				
 				if(angls_v.red!=null && angls_v.red!=0 && angls_v.blue!=null && angls_v.blue!=0){
-					let diff=Math.abs(angls_v.red-angls_v.blue);
 					setupt(xs[3],ys[3], d,false,true);
 					setupt(xs[0],ys[0], d,true,true);
+					let neg=((angls_v.blue-angls_v.red>=Math.PI)||(angls_v.red-angls_v.blue>=0))?true:false;
+					let diff=(angls_v.blue-angls_v.red>=Math.PI)?Math.abs(2*Math.PI-angls_v.blue+angls_v.red):Math.abs(angls_v.red-angls_v.blue);
 					let refDiff=Math.abs(refAngls_v.red-refAngls_v.blue);
 					let diff2=(refDiff==0)?0:rfV.valueAsNumber*(diff/refDiff);
 					diff2=Math.abs(diff2);
-					diff2=(angls_h.red<=angls_h.blue)?diff2:-diff2;
-					outV=diff2;
+					diff2=(neg)?-diff2:diff2;
 					rfVLbl.innerText=diff2.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false});
 				}else if(angls_v.red==0  && angls_v.blue==0){
 										let a=Math.abs(xs[2]-xs[3]);
@@ -373,14 +373,14 @@ function changeValue()
 
 		if(!Number.isNaN(rfH.valueAsNumber)){
 				if(angls_h.red!=null && angls_h.red!=0 && angls_h.blue!=null && angls_h.blue!=0){
-										let diff=Math.abs(angls_h.red-angls_h.blue);
 					setup(xs[3],ys[3], d,false,true);
 					setup(xs[2],ys[2], d,true,true);
+					let neg=((angls_h.blue-angls_h.red>=Math.PI)||(angls_h.red-angls_h.blue>=0))?false:true;
+					let diff=(angls_h.blue-angls_h.red>=Math.PI)?Math.abs(2*Math.PI-angls_h.blue+angls_h.red):Math.abs(angls_h.red-angls_h.blue);
 					let refDiff=Math.abs(refAngls_h.red-refAngls_h.blue);
 					let diff2=(refDiff==0)?0:rfH.valueAsNumber*(diff/refDiff);
 					diff2=Math.abs(diff2);
-					diff2=(angls_h.red>=angls_h.blue)?diff2:-diff2;
-					outH=diff2;
+					diff2=(neg)?-diff2:diff2;
 					rfHLbl.innerText=diff2.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false});
 				}else if(angls_h.red==0  && angls_h.blue==0){
 										let a=Math.abs(xs[2]-xs[3]);
@@ -427,13 +427,14 @@ function changeValue()
 				if(!Number.isNaN(rfV.valueAsNumber)){
 				
 				if(angls_v.red!=null && angls_v.red!=0 && angls_v.blue!=null && angls_v.blue!=0){
-					let diff=Math.abs(angls_v.red-angls_v.blue);
 					setupt(xs[3],ys[3], d,false,true);
 					setupt(xs[0],ys[0], d,true,true);
+					let neg=((angls_v.blue-angls_v.red>=Math.PI)||(angls_v.red-angls_v.blue>=0))?true:false;
+					let diff=(angls_v.blue-angls_v.red>=Math.PI)?Math.abs(2*Math.PI-angls_v.blue+angls_v.red):Math.abs(angls_v.red-angls_v.blue);
 					let refDiff=Math.abs(refAngls_v.red-refAngls_v.blue);
 					let diff2=(refDiff==0)?0:rfV.valueAsNumber*(diff/refDiff);
 					diff2=Math.abs(diff2);
-					diff2=(angls_h.red<=angls_h.blue)?diff2:-diff2;
+					diff2=(neg)?-diff2:diff2;
 					rfVLbl.innerText=diff2.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false});
 				}else if(angls_v.red==0  && angls_v.blue==0){
 										let a=Math.abs(xs[2]-xs[3]);
@@ -478,13 +479,14 @@ function changeValue()
 				
 		if(!Number.isNaN(rfH.valueAsNumber)){
 				if(angls_h.red!=null && angls_h.red!=0 && angls_h.blue!=null && angls_h.blue!=0){
-										let diff=Math.abs(angls_h.red-angls_h.blue);
 					setup(xs[3],ys[3], d,false,true);
 					setup(xs[2],ys[2], d,true,true);
+					let neg=((angls_h.blue-angls_h.red>=Math.PI)||(angls_h.red-angls_h.blue>=0))?false:true;
+					let diff=(angls_h.blue-angls_h.red>=Math.PI)?Math.abs(2*Math.PI-angls_h.blue+angls_h.red):Math.abs(angls_h.red-angls_h.blue);
 					let refDiff=Math.abs(refAngls_h.red-refAngls_h.blue);
 					let diff2=(refDiff==0)?0:rfH.valueAsNumber*(diff/refDiff);
 					diff2=Math.abs(diff2);
-					diff2=(angls_h.red>=angls_h.blue)?diff2:-diff2;
+					diff2=(neg)?-diff2:diff2;
 					rfHLbl.innerText=diff2.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false});
 				}else if(angls_h.red==0  && angls_h.blue==0){
 										let a=Math.abs(xs[2]-xs[3]);
@@ -503,6 +505,7 @@ function changeValue()
             }
 
         }
+
 
 				function switcher(){
 
@@ -776,7 +779,7 @@ function changeValue()
 
             var tdy = Math.sin(d * dp * theta) * (x - xyq1.x) + Math.cos(d * dp * theta) * (y - xyq1.y) + xyq1.y;
 
-           			let angl_h = Math.atan2(y- xyq1.y, xyq1.x-x)-0.5*Math.PI;
+           			let angl_h = Math.atan2(y- xyq1.y, xyq1.x-x);
 								if(refAngl){
 													if(red){
 					refAngls_h.red=angl_h;
@@ -791,7 +794,7 @@ function changeValue()
 					}
 					
 					if(red==currRed){
-					angl=angl_h;
+					angl=angl_h-0.5*Math.PI;
 					}
 			
 	if(theta!==0){
@@ -911,7 +914,8 @@ if(!refAngl){
             var tdx = Math.cos(d * dp * thetav) * (x - xyq1.x) - Math.sin(d * dp * thetav) * (y - xyq1.y) + xyq1.x;
 
             var tdy = Math.sin(d * dp * thetav) * (x - xyq1.x) + Math.cos(d * dp * thetav) * (y - xyq1.y) + xyq1.y;
-           			let angl_v= Math.atan2(y- xyq1.y, xyq1.x-x)-0.5*Math.PI
+
+           			let angl_v= Math.atan2(y- xyq1.y, xyq1.x-x);
 					
 					if(refAngl){
 					if(red){
@@ -927,7 +931,7 @@ if(!refAngl){
 					}
 					
 					if(red==currRed  && !refAngl){
-					angl=angl_v;
+					angl=angl_v-0.5*Math.PI;
 					}
 					
 					
