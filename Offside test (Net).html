@@ -361,6 +361,7 @@ function changeValue()
 					let diff2=(refDiff==0)?0:rfV.valueAsNumber*(diff/refDiff);
 					diff2=Math.abs(diff2);
 					diff2=(neg)?-diff2:diff2;
+					outV=diff2;
 					rfVLbl.innerText=diff2.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false});
 				}else if(angls_v.red==0  && angls_v.blue==0){
 										let a=Math.abs(xs[2]-xs[3]);
@@ -381,6 +382,7 @@ function changeValue()
 					let diff2=(refDiff==0)?0:rfH.valueAsNumber*(diff/refDiff);
 					diff2=Math.abs(diff2);
 					diff2=(neg)?-diff2:diff2;
+					outH=diff2;
 					rfHLbl.innerText=diff2.toLocaleString('en-GB', {minimumFractionDigits: 0, maximumFractionDigits: 7, useGrouping: false});
 				}else if(angls_h.red==0  && angls_h.blue==0){
 										let a=Math.abs(xs[2]-xs[3]);
@@ -614,7 +616,7 @@ function changeValue()
            redSw.click();
         } else if (!event.ctrlKey) {
 		event.preventDefault();
-            p = get_mouse_position(event);
+          //  p = get_mouse_position(event);
 
             scr = (scr + (event.deltaY / event.deltaY)) % 6;
 
