@@ -804,7 +804,7 @@ y: null
             ctx.lineTo(extendedPoint3.x, extendedPoint3.y);
             ctx.lineTo(extendedPoint1.x, extendedPoint1.y);
 
-            ctx.fillStyle = "rgba(255, 255, 255, 0.3)";
+            ctx.fillStyle = (red)?"rgba(240, 0, 0, 0.3)":"rgba(0, 0, 205, 0.3)";
             ctx.strokeStyle = "rgba(255, 255, 255, 0)";
             ctx.stroke();
             ctx.fill();
@@ -941,7 +941,7 @@ if(!refAngl){
             extendedPoint3 = toBorder(tdxy, xyq1, 0, canvas.clientWidth, canvas.clientHeight, 0);
             ctx.lineTo(extendedPoint3.x, extendedPoint3.y);
             ctx.lineTo(extendedPoint1.x, extendedPoint1.y);
-            ctx.fillStyle = "rgba(255, 255, 255, 0.3)";
+            ctx.fillStyle = (red)?"rgba(240, 0, 0, 0.3)":"rgba(0, 0, 205, 0.3)";
             ctx.strokeStyle = "rgba(255, 255, 255, 0)";
             ctx.stroke();
             ctx.fill();
