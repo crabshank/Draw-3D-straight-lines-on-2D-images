@@ -701,6 +701,25 @@ function actStart() {
 						ctx.stroke();
 					}
 			}
+			
+			if(infn){
+					if(refAngl){
+						if(red){
+						refAngls_h.red=0;
+						}else{
+						refAngls_h.blue=0;
+						}
+					}else{
+				if(red){
+						angls_h.red=0;
+						}else{
+						angls_h.blue=0;
+						}
+				if(red==currRed){
+						angl=0;
+				}
+				}
+			}
 
         }   
 		
@@ -799,7 +818,7 @@ if(!refAngl){
 							angl=angl_v-0.5*Math.PI;
 							}
 					
-			if(scr===2 || scr===3){
+			if(d && (scr===2 || scr===3)){
 					   var tdxy = {
 							x: tdx,
 							y: tdy
@@ -812,6 +831,26 @@ if(!refAngl){
 						ctx.strokeStyle=ss;
 						ctx.stroke();
 					}
+					if(infn){
+			if(refAngl){
+								if(red){
+					refAngls_v.red=0;
+					}else{
+					refAngls_v.blue=0;
+					}
+			}else{
+								if(red){
+					angls_v.red=0;
+					}else{
+					angls_v.blue=0;
+					}
+			
+			if(red==currRed){
+					angl=0;
+			}
+			}
+			}
+					
 			}
 			
         }
