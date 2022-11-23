@@ -568,14 +568,14 @@ function changeValue()
 
     canvas.addEventListener("wheel", function(event) {
 
-        if (event.altKey) {
+       /* if (event.altKey) {
             event.preventDefault();
             if (event.deltaY / Math.abs(event.deltaY) < 0) {
                 gpl();
             } else {
                 gmi();
             }
-        } else if (event.shiftKey) {
+        } else*/ if (event.shiftKey) {
 		event.preventDefault();
            redSw.click();
         } else if (!event.ctrlKey) {
