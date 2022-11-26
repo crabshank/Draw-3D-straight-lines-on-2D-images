@@ -13,7 +13,8 @@
 <main style="display: -webkit-inline-box;">
 <section style="display: table-caption;">
     <input type="file" accept="video/*" />
-<button  id="gmi" type="button" >Toggle vertical component</button><br>
+<button  id="gmi" type="button" >Toggle vertical component</button>
+<button  id="dflip" type="button" >Flip vertical component</button><br>
     <button id="cvsTog" type="button">Create/Delete canvas</button><br>
 	<button id="cRedSw" type="button" style="background: mediumblue !important;">Blue</button><br><br>
 Horizontal Distance<br><input id="refDistH" value="" type="number" style="max-width: max-content !important; min-width: 75px !important; line-height: 2ch !important; padding: 2px 0px 2px 4px !important; display: initial !important; visibility: initial !important; background-color: #cf17ff !important; border-width: 0px !important; border-style: outset !important; border-color: black !important; color: white !important;"><br>
@@ -95,7 +96,7 @@ y: null
 };
 	var lkln = document.getElementById('lkl');
 	    var scr = 0;
-
+		var dfl=1;
         var canvas = document.createElement('canvas');
         canvas.id = "canvas";
         canvas.className = "canvas";
@@ -105,6 +106,10 @@ y: null
         document.getElementById('gmi').onclick = function() {
             gmi();
         }
+        document.getElementById('dflip').onclick = function() {
+			dfl*=-1;
+			switcher();
+		}
         document.getElementById('cvsTog').onclick = function() {
             cvsTog();
         }
@@ -743,7 +748,7 @@ y: null
 				}
 
             var dp = -(x - xyq1.x) / Math.abs(x - xyq1.x);
-			
+				  dp*=dfl;
             var tdx = Math.cos(dp) * (x - xyq1.x) - Math.sin(dp) * (y - xyq1.y) + xyq1.x;
 
             var tdy = Math.sin(dp) * (x - xyq1.x) + Math.cos(dp) * (y - xyq1.y) + xyq1.y;
@@ -874,7 +879,7 @@ if(!refAngl){
 
 
          var dp = -(x - xyq1.x) / Math.abs(x - xyq1.x);
-			
+				  dp*=dfl;
             var tdx = Math.cos(dp) * (x - xyq1.x) - Math.sin(dp) * (y - xyq1.y) + xyq1.x;
 
             var tdy = Math.sin(dp) * (x - xyq1.x) + Math.cos(dp) * (y - xyq1.y) + xyq1.y;
