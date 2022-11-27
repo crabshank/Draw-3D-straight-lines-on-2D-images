@@ -2,7 +2,7 @@ Create two parallel lines using the 4 cyan calibration points and their connecti
 
 Shortcuts: 
 
-* Scroll: Switch plane orientation. 
+* Scroll: Switch line direction. 
 
 * S: Frame-by-frame (approximately) backwards. 
 
