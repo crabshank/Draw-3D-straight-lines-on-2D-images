@@ -790,7 +790,7 @@ function toBorders(from, to, left, right, top, bottom ){
 
 					}else{
 							drawLine(ctx,{x:x,y:0},{x:x,y:canvas.clientHeight},ss,0.7);
-							if(scr===4 || scr===5){
+							if((scr===4 || scr===5) && d){
 								if(dfl){
 									drawLine(ctx,{x:x,y:y},{x:canvas.clientWidth,y:y},ss,0.7);
 								}else{
@@ -895,7 +895,7 @@ function toBorders(from, to, left, right, top, bottom ){
 
 					}else{
 							drawLine(ctx,{x:0,y:y},{x:canvas.clientWidth,y:y},ss,0.7);
-							if(scr===2 || scr===3){
+							if((scr===2 || scr===3) && d){
 								if(dfl){
 									drawLine(ctx,{x:x,y:y},{x:x,y:canvas.clientHeight},ss,0.7);
 								}else{
