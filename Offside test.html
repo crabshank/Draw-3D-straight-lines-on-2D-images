@@ -4,7 +4,7 @@
 <head>
 
     <meta charset="utf-8">
-<script src="jquery-3.6.0.min.js"></script>
+<script src="jquery-3.6.1.min.js"></script>
 <script type="text/javascript" src="numeric-1.2.6_stripped.js"></script>
 
 </head>
@@ -96,7 +96,7 @@ y: null
 };
 	var lkln = document.getElementById('lkl');
 	    var scr = 0;
-		var dfl=1;
+		var dfl=true;
         var canvas = document.createElement('canvas');
         canvas.id = "canvas";
         canvas.className = "canvas";
@@ -107,7 +107,7 @@ y: null
             gmi();
         }
         document.getElementById('dflip').onclick = function() {
-			dfl*=-1;
+			dfl*=!dfl;
 			switcher();
 		}
         document.getElementById('cvsTog').onclick = function() {
@@ -688,9 +688,69 @@ y: null
 
         var mvrt = 0;	
 
-   function setup(x, y, d,red,refAngl) {
-            var n = 1;
+function drawLine(ctx,from,to,colour,w){
+try{
+		ctx.beginPath();
+		ctx.strokeStyle =colour;
+		ctx.lineWidth = w;
+		ctx.moveTo(from.x, from.y);
+		ctx.lineTo(to.x, to.y);
+		ctx.stroke();
+	}catch(e){;}
+}
+function toBorders(from, to, left, right, top, bottom ){
+	let x=[from.x,to.x-from.x];
+	let y=[from.y,to.y-from.y];
+	let lambda_at={}
 
+	if(x[1]===0){
+		lambda_at.l=null;
+		lambda_at.r=null;
+	}else{
+			let i=1/x[1];
+			lambda_at.l= (left-x[0])*i;
+			lambda_at.r= (right-x[0])*i;
+	}	
+
+	if(y[1]===0){
+		lambda_at.t=null;
+		lambda_at.b=null;
+	}else{
+		let i=1/y[1];
+		lambda_at.t= (top-y[0])*i;
+		lambda_at.b= (bottom-y[0])*i;
+	}
+
+	let x_at={ // y_at.t = top
+		t: (lambda_at.t===null)? x[0] : x[0]+ lambda_at.t*x[1],
+		b: (lambda_at.b===null)? x[0] : x[0]+ lambda_at.b*x[1],
+	}
+
+	let y_at={ // x_at.l = left
+		l: (lambda_at.l===null)? y[0] : y[0]+ lambda_at.l*y[1],
+		r: (lambda_at.r===null)? y[0] : y[0]+ lambda_at.r*y[1],
+	}
+
+	let poss=[[x_at.t,top], [x_at.b, bottom], [left, y_at.l], [right, y_at.r]];
+	let c=0;
+	let outs=[];
+
+	for(let k=0; k<4;++k){
+		if(poss[k][0]>=left && poss[k][0]<=right && poss[k][1]>=top && poss[k][1]<=bottom){
+			outs.push({x:poss[k][0], y: poss[k][1]});
+			c++;
+		}
+		if(c==2){
+			break;
+		}
+	}
+
+	return outs;
+}
+
+   function setup(x, y, d,red,refAngl) {
+			let n=1;
+   
             var xy = {
                 x: x,
                 y: y
@@ -727,87 +787,65 @@ y: null
                 xyq1.y = yq1;
 
             }
-			let ss=(red)?"#f00000": "mediumblue";
-					if(!refAngl){
-						ctx.beginPath();
-						ctx.strokeStyle =ss;
-						ctx.lineWidth = 0.7;
-					}
-
-				if(infn){
+			
+			if(infn){
 					xyq1.x=x;
 					xyq1.y=0;
 				}
-				if(!refAngl){
-					extendedPoint = toBorder(xyq1, xy, 0, canvas.clientWidth, canvas.clientHeight, 0);
-					ctx.moveTo(extendedPoint.x, extendedPoint.y);
-					extendedPoint1 = toBorder(xy, xyq1, 0, canvas.clientWidth, canvas.clientHeight, 0);
-					ctx.lineTo(extendedPoint1.x, extendedPoint1.y);
+			let angls=[0,0];
 
-					ctx.stroke();
-				}
-
-            var dp = -(x - xyq1.x) / Math.abs(x - xyq1.x);
-				  dp*=dfl;
-            var tdx = Math.cos(dp) * (x - xyq1.x) - Math.sin(dp) * (y - xyq1.y) + xyq1.x;
-
-            var tdy = Math.sin(dp) * (x - xyq1.x) + Math.cos(dp) * (y - xyq1.y) + xyq1.y;
-
-           			let angl_h = Math.atan2(y- xyq1.y, xyq1.x-x);
-					
-				if(refAngl){
-										if(red){
-											refAngls_h.red=angl_h;
-										}else{
-											refAngls_h.blue=angl_h;
-										}
-				}else{	
-							if(red){
-								angls_h.red=angl_h;
-							}else{
-								angls_h.blue=angl_h;
-							}
-							
-							if(red==currRed){
-							angl=angl_h-0.5*Math.PI;
-							}
-					
-			if(d && !infn){
-					   var tdxy = {
-							x: tdx,
-							y: tdy
-						};
-						 ctx.beginPath();
-						extendedPoint2= toBorder( {x:xy.x, y:tdxy.y},xy, 0, canvas.clientWidth, canvas.clientHeight, 0);
-						ctx.moveTo(xy.x, xy.y);
-						ctx.lineTo(extendedPoint2.x, extendedPoint2.y);
-
-						ctx.strokeStyle=ss;
-						ctx.stroke();
-					}
-			}
+			let ss=(red)?"#f00000": "mediumblue";
 			
-			if(infn){
-					if(refAngl){
-						if(red){
-						refAngls_h.red=0;
-						}else{
-						refAngls_h.blue=0;
+					if(!infn){
+						var dp = -(x - xyq1.x) / Math.abs(x - xyq1.x);
+						let td={};
+						td.x = Math.cos(dp) * (x - xyq1.x) - Math.sin(dp) * (y - xyq1.y) + xyq1.x;
+						td.y = Math.sin(dp) * (x - xyq1.x) + Math.cos(dp) * (y - xyq1.y) + xyq1.y;
+						let angl_h = Math.atan2(y- xyq1.y, xyq1.x-x);
+						angls[0]=angl_h;
+						angls[1]=angl_h-0.5*Math.PI;
+						if(!refAngl){
+							let extendedPoints = toBorders(xyq1, xy, 0, canvas.clientWidth,0 ,canvas.clientHeight);
+							drawLine(ctx,extendedPoints[0],extendedPoints[1],ss,0.7);
+							if(d){
+								let extendedPointsV=toBorders( {x:x, y:td.y},xy, 0, canvas.clientWidth,0 ,canvas.clientHeight);
+								if(dfl){
+									drawLine(ctx,xy,extendedPointsV[1],ss,0.7);
+								}else{
+									drawLine(ctx,xy,extendedPointsV[0],ss,0.7);
+								}
+							}
 						}
-					}else{
-				if(red){
-						angls_h.red=0;
-						}else{
-						angls_h.blue=0;
-						}
-				if(red==currRed){
-						angl=0;
-				}
-				}
-			}
 
-        }   
-		
+					}else{
+							drawLine(ctx,{x:x,y:0},{x:x,y:canvas.clientHeight},ss,0.7);
+							if(scr===4 || scr===5){
+								if(dfl){
+									drawLine(ctx,{x:x,y:y},{x:canvas.clientWidth,y:y},ss,0.7);
+								}else{
+									drawLine(ctx,{x:0,y:y},{x:x,y:y},ss,0.7);
+								}
+							}
+					}
+									
+				if(refAngl){
+					if(red){
+						refAngls_h.red=angls[0];
+					}else{
+						refAngls_h.blue=angls[0];
+					}
+				}else{
+					if(red){
+							angls_h.red=angls[0];
+					}else{
+							angls_h.blue=angls[0];
+					}
+					if(red==currRed){
+							angl=angls[1];
+					}
+				}
+				
+	}
 
         function setupt(x, y, d,red,refAngl) {
 
@@ -825,7 +863,7 @@ y: null
             yst[1] = ys[3];
             yst[2] = ys[2];
             yst[3] = ys[0];
-
+			
             var xy = {
                 x: x,
                 y: y
@@ -835,8 +873,7 @@ y: null
                 y: 0
             };
 			let infn=((xst[3] == xst[1]) && (xst[2] == xst[0]))?true:false; 
- if (!infn)
-			{
+	if (!infn){
 			var m1 = (yst[3] - yst[0]) / (xst[3] - xst[0]);
 			var m2 = (yst[2] - yst[1]) / (xst[2] - xst[1]);
 			var mvrt = (tdys[1] - tdys[0]) / (tdxs[1] - tdxs[0]);
@@ -854,90 +891,65 @@ y: null
 			var yq1 = yst[0] + g12[0] * m1;
 			xyq1.x = xq1;
 			xyq1.y = yq1;
-            }
-let ss=(red)?"#f00000": "mediumblue";
-if(!refAngl){
-            ctx.beginPath();
-            ctx.strokeStyle =ss;
-            ctx.lineWidth = 0.7;
-}
+      }
+			
 			if(infn){
 					xyq1.x=0;
-					xyq1.y= y;
+					xyq1.y=y;
 				}
+			let angls=[0,0];
+
+			let ss=(red)?"#f00000": "mediumblue";
 			
-			if(!refAngl){
-			          extendedPoint = toBorder(xyq1, xy, 0, canvas.clientHeight,canvas.clientWidth, 0);
-            ctx.moveTo(extendedPoint.x, extendedPoint.y);
+					if(!infn){
+						var dp = -(x - xyq1.x) / Math.abs(x - xyq1.x);
+						let td={};
+						td.x = Math.cos(dp) * (x - xyq1.x) - Math.sin(dp) * (y - xyq1.y) + xyq1.x;
+						td.y = Math.sin(dp) * (x - xyq1.x) + Math.cos(dp) * (y - xyq1.y) + xyq1.y;
+						let angl_v = Math.atan2(y- xyq1.y, xyq1.x-x);
+						angls[0]=angl_v;
+						angls[1]=angl_v-0.5*Math.PI;
+						if(!refAngl){
+							let extendedPoints = toBorders(xyq1, xy, 0, canvas.clientWidth,0 ,canvas.clientHeight);
+							drawLine(ctx,extendedPoints[0],extendedPoints[1],ss,0.7);
+							if(d && (scr===2 || scr===3)){
+								let extendedPointsV=toBorders( {x:x, y:td.y},xy, 0, canvas.clientWidth,0 ,canvas.clientHeight);
+								if(dfl){
+									drawLine(ctx,xy,extendedPointsV[1],ss,0.7);
+								}else{
+									drawLine(ctx,xy,extendedPointsV[0],ss,0.7);
+								}
+							}
+						}
 
-            extendedPoint1 = toBorder(xy, xyq1, 0, canvas.clientHeight,canvas.clientWidth,0);
-            ctx.lineTo(extendedPoint1.x, extendedPoint1.y);
-
-					ctx.stroke();
-			}
-			
-
-
-         var dp = -(x - xyq1.x) / Math.abs(x - xyq1.x);
-				  dp*=dfl;
-            var tdx = Math.cos(dp) * (x - xyq1.x) - Math.sin(dp) * (y - xyq1.y) + xyq1.x;
-
-            var tdy = Math.sin(dp) * (x - xyq1.x) + Math.cos(dp) * (y - xyq1.y) + xyq1.y;
-
-           			let angl_v = Math.atan2(y- xyq1.y, xyq1.x-x);
-					
+					}else{
+							drawLine(ctx,{x:0,y:y},{x:canvas.clientWidth,y:y},ss,0.7);
+							if(scr===2 || scr===3){
+								if(dfl){
+									drawLine(ctx,{x:x,y:y},{x:x,y:canvas.clientHeight},'yellow',0.7);
+								}else{
+									drawLine(ctx,{x:x,y:y},{x:x,y:0},ss,0.7);
+								}
+							}
+					}
+									
 				if(refAngl){
-										if(red){
-											refAngls_v.red=angl_v;
-										}else{
-											refAngls_v.blue=angl_v;
-										}
-				}else{	
-							if(red){
-								angls_v.red=angl_v;
-							}else{
-								angls_v.blue=angl_v;
-							}
-							
-							if(red==currRed){
-							angl=angl_v-0.5*Math.PI;
-							}
-					
-			if(d && (scr===2 || scr===3)){
-					   var tdxy = {
-							x: tdx,
-							y: tdy
-						};
-						 ctx.beginPath();
-						extendedPoint2= toBorder( {x:xy.x, y:tdxy.y},xy, 0, canvas.clientWidth, canvas.clientHeight, 0);
-						ctx.moveTo(xy.x, xy.y);
-						ctx.lineTo(extendedPoint2.x, extendedPoint2.y);
-
-						ctx.strokeStyle=ss;
-						ctx.stroke();
-					}
-					if(infn){
-			if(refAngl){
-								if(red){
-					refAngls_v.red=0;
+					if(red){
+						refAngls_v.red=angls[0];
 					}else{
-					refAngls_v.blue=0;
+						refAngls_v.blue=angls[0];
 					}
-			}else{
-								if(red){
-					angls_v.red=0;
+				}else{
+					if(red){
+							angls_v.red=angls[0];
 					}else{
-					angls_v.blue=0;
+							angls_v.blue=angls[0];
 					}
-			
-			if(red==currRed){
-					angl=0;
-			}
-			}
-			}
-					
-			}
-			
+					if(red==currRed){
+							angl=angls[1];
+					}
+				}
+				
         }
 
     }

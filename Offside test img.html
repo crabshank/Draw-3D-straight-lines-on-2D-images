@@ -608,16 +608,6 @@ function actStart() {
 
     var mvrt = 0;
 
-//Debug!!
-function drawCircle(ctx,x,y,colour){
-			     ctx.beginPath();
-				  ctx.arc(x, y, 5, 0, 2 * Math.PI, false);
-				  ctx.fillStyle = colour;
-				  ctx.fill();
-				  ctx.lineWidth = 1;
-				  ctx.strokeStyle = colour;
-				ctx.stroke();
-}
 function drawLine(ctx,from,to,colour,w){
 try{
 		ctx.beginPath();
