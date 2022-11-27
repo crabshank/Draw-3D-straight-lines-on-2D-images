@@ -96,7 +96,7 @@ y: null
 };
 	var lkln = document.getElementById('lkl');
 	    var scr = 0;
-		var dfl=true;
+		var dfl=false;
         var canvas = document.createElement('canvas');
         canvas.id = "canvas";
         canvas.className = "canvas";
@@ -107,7 +107,7 @@ y: null
             gmi();
         }
         document.getElementById('dflip').onclick = function() {
-			dfl*=!dfl;
+			dfl=!dfl;
 			switcher();
 		}
         document.getElementById('cvsTog').onclick = function() {
@@ -259,35 +259,6 @@ y: null
         var drag = null;
 
         var prx = 15;
-
-        function toBorder(point1, point2, left, top, right, bottom) {
-
-            var x1 = point1.x;
-            var x2 = point2.x;
-            var y1 = point1.y;
-            var y2 = point2.y;
-            var dx, dy, py, vx, vy;
-            vx = x2 - x1;
-            vy = y2 - y1;
-            dx = vx < 0 ? left : right;
-            dy = py = vy < 0 ? top : bottom;
-            if (vx === 0) {
-                dx = x1;
-            } else if (vy === 0) {
-                dy = y1;
-            } else {
-                var dy = y1 + (vy / vx) * (dx - x1);
-                if (dy < top || dy > bottom) {
-                    dx = x1 + (vx / vy) * (py - y1);
-                    dy = py;
-                }
-            }
-            return {
-                x: dx,
-                y: dy
-            }
-        }
-       /* Source: https://stackoverflow.com/a/45056039 - Blindman67*/
 
                       function both(p) {
 			var outH=0;
