@@ -70,6 +70,11 @@ var lastRed_xy={
 x: null,
 y: null
 };
+var vid_dims={
+	width: null,
+	height: null
+};
+var pZoom=window.devicePixelRatio;
 var lkln = document.getElementById('lkl');
 var vid = document.getElementById('lkl');
 var lodr = document.getElementById('ldr');
@@ -228,10 +233,14 @@ function changeValue()
         var ys = [0];
         var tdxs = [0];
         var tdys = [0];
+
         var canvas = document.getElementById("canvas");
         canvas.width = vid.clientWidth;
         canvas.height = vid.clientHeight;
 
+		vid_dims.width=vid.clientWidth;
+		vid_dims.height=vid.clientHeight;
+		
         var ctx = canvas.getContext('2d');
 
         var canvas1 = document.createElement('canvas');
@@ -479,17 +488,37 @@ function changeValue()
 			switcher();
 		}
 
+		function prp_points(canvas,canvas1,canvas2){
+			if(vid.clientWidth!==vid_dims.width || vid.clientHeight!==vid_dims.height){
+				for (let i = 0; i <6; i++) {
+						points[i][0]=(points[i][0]/vid_dims.width)*vid.clientWidth; //x
+						points[i][1]=(points[i][1]/vid_dims.height)*vid.clientHeight; //y
+				}
+				vid_dims.width=vid.clientWidth;
+				vid_dims.height=vid.clientHeight;
+				canvas.width = vid.clientWidth;
+				canvas.height = vid.clientHeight;
+
+				canvas1.width = vid.clientWidth;
+				canvas1.height = vid.clientHeight;
+
+				canvas2.width = vid.clientWidth;
+				canvas2.height = vid.clientHeight;
+			}
+		}
+		
+		window.addEventListener('resize',(e)=>{
+			if(window.devicePixelRatio!==pZoom){
+				prp_points(canvas,canvas1,canvas2);
+				pZoom=window.devicePixelRatio;
+			}
+		});
+		
         canvas.addEventListener("mousedown", function(event) {
 
-            canvas.width = vid.clientWidth;
-            canvas.height = vid.clientHeight;
-
-            canvas1.width = vid.clientWidth;
-            canvas1.height = vid.clientHeight;
-
-            canvas2.width = vid.clientWidth;
-            canvas2.height = vid.clientHeight;
             event.preventDefault();
+			prp_points(canvas,canvas1,canvas2);
+
             p = get_mouse_position(event);
             for (let i = 0; i <4; i++) {
                 let x = points[i][0];
