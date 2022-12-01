@@ -65,6 +65,7 @@ var rfVLbl=document.getElementById('refDistVLbl');
 var rfHVLbl=document.getElementById('refDistHVLbl');
 var OG_cbr;
 var angl = 0;
+var is_mousedown=false;
 var angls_h = {
 red: null,
 blue: null
@@ -514,37 +515,56 @@ var pZoom=window.devicePixelRatio;
 		});
 		
 
-        canvas.addEventListener("mousedown", function(event) {
-
-            event.preventDefault();
-			prp_points(canvas,canvas1,canvas2);
+        canvas.addEventListener("mouseleave", function(event) {
+				document.body.style.setProperty('cursor','');
+		}, false);
+		
+		canvas.addEventListener("mouseenter", function(event) {
+			if(is_mousedown){
+				document.body.style.setProperty('cursor','none');
+			}
+		}, false);
+		
+        window.addEventListener("mouseup", function(event) {
+			is_mousedown=false;
+			document.body.style.setProperty('cursor','');
+		}, false);
+		
+        window.addEventListener("mousedown", function(event) {
+			is_mousedown=true;
 			
-            p = get_mouse_position(event);
-            for (let i = 0; i <4; i++) {
-                let x = points[i][0];
-                let y = points[i][1];
-                xs[i] = points[i][0];
-                ys[i] = points[i][1];
+			if(event.target===canvas){
+				document.body.style.setProperty('cursor','none');
+				 event.preventDefault();
+				prp_points(canvas,canvas1,canvas2);
+				
+				p = get_mouse_position(event);
+				for (let i = 0; i <4; i++) {
+					let x = points[i][0];
+					let y = points[i][1];
+					xs[i] = points[i][0];
+					ys[i] = points[i][1];
 
-                if (p.x < x + prx && p.x > x - prx && p.y < y + prx && p.y > y - prx) {
-                    drag = i;
-                }
-            }
+					if (p.x < x + prx && p.x > x - prx && p.y < y + prx && p.y > y - prx) {
+						drag = i;
+					}
+				}
 
-            for (let i = 4; i < 6; i++) {
-                let x = points[i][0];
-                let y = points[i][1];
-                tdxs[i - 4] = points[i][0];
-                tdys[i - 4] = points[i][1];
+				for (let i = 4; i < 6; i++) {
+					let x = points[i][0];
+					let y = points[i][1];
+					tdxs[i - 4] = points[i][0];
+					tdys[i - 4] = points[i][1];
 
-                if (p.x < x + prx && p.x > x - prx && p.y < y + prx && p.y > y - prx) {
-                    drag = i;
-                }
-            }
+					if (p.x < x + prx && p.x > x - prx && p.y < y + prx && p.y > y - prx) {
+						drag = i;
+					}
+				}
 
-            switcher();
-
-        }, false);
+				switcher();
+			}
+		}, false);
+        
         canvas.addEventListener("mousemove", function(event) {
 
             if (event.which == 1) {
