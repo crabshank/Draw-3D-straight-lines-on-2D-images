@@ -505,11 +505,10 @@ function actStart() {
 
     canvas.addEventListener("mouseup", function(event) {
         event.preventDefault();
+		 drag = null;
         prepare_lines(ctx2, points);
         ctx.drawImage(ctx1.canvas, 0, 0);
         ctx.drawImage(ctx2.canvas, 0, 0);
-        drag = null;
-
     }, false);
     canvas.addEventListener("mouseout", function(event) {
         event.preventDefault();
@@ -554,9 +553,9 @@ function actStart() {
                 ctx.closePath();
                 ctx.strokeStyle = "black";
                 ctx.stroke();
-
-            ctx.strokeStyle = 'cyan';
+			
             for (var i = 0; i <4; i++) {
+				ctx.strokeStyle =(i===drag)?'#6aff00':'#00ffff';
                 ctx.beginPath();
                 ctx.arc(p[i][0], p[i][1], 3, 0, Math.PI * 2, true);
                 ctx.stroke();
