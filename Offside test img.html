@@ -708,7 +708,7 @@ function toBorders(from, to, left, right, top, bottom ){
 					if(!infn){
 						var dp = -(x - xyq1.x) / Math.abs(x - xyq1.x);
 						let td={};
-						td.x = Math.cos(dp) * (x - xyq1.x) - Math.sin(dp) * (y - xyq1.y) + xyq1.x;
+						//td.x = Math.cos(dp) * (x - xyq1.x) - Math.sin(dp) * (y - xyq1.y) + xyq1.x;
 						td.y = Math.sin(dp) * (x - xyq1.x) + Math.cos(dp) * (y - xyq1.y) + xyq1.y;
 						let angl_h = Math.atan2(y- xyq1.y, xyq1.x-x);
 						angls[0]=angl_h;
@@ -813,7 +813,7 @@ function toBorders(from, to, left, right, top, bottom ){
 					if(!infn){
 						var dp = -(x - xyq1.x) / Math.abs(x - xyq1.x);
 						let td={};
-						td.x = Math.cos(dp) * (x - xyq1.x) - Math.sin(dp) * (y - xyq1.y) + xyq1.x;
+						//td.x = Math.cos(dp) * (x - xyq1.x) - Math.sin(dp) * (y - xyq1.y) + xyq1.x;
 						td.y = Math.sin(dp) * (x - xyq1.x) + Math.cos(dp) * (y - xyq1.y) + xyq1.y;
 						let angl_v = Math.atan2(y- xyq1.y, xyq1.x-x);
 						angls[0]=angl_v;
