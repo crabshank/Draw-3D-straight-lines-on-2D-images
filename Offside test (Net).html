@@ -756,8 +756,8 @@ function toBorders(from, to, left, right, top, bottom ){
 	for(let k=0; k<4;++k){
 		if(poss[k][0]>=left && poss[k][0]<=right && poss[k][1]>=top && poss[k][1]<=bottom){
 		   let p={x:poss[k][0], y: poss[k][1]};
-		   let clsh=(i===1 && outs[0].x===p.x && outs[0].y===p.y)?true:false;
-		   if(i===0 || !clsh){
+		   let clsh=(c===1 && outs[0].x===p.x && outs[0].y===p.y)?true:false;
+		   if(c===0 || !clsh){
 		   	outs.push(p);
 			   c++;
 		   }
